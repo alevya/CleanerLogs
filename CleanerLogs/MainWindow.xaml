@@ -6,9 +6,11 @@
         xmlns:local="clr-namespace:CleanerLogs"
         mc:Ignorable="d"
 				WindowStyle="SingleBorderWindow"
+				WindowStartupLocation="CenterScreen"
         Title="Foreman - Сохранение и очистка лог-файлов"
 				Icon ="Resources/MainIcon.ico"
-        Height="350" Width="525">
+        Height="350" Width="525
+				">
 
 	<DockPanel Name="MainDockPanel">
 		<Menu DockPanel.Dock="Top"
@@ -23,16 +25,52 @@
 					</VirtualizingStackPanel>
 				</ItemsPanelTemplate>
 			</Menu.ItemsPanel>
-			
+
 			<MenuItem Header="Настройки">
 				<MenuItem Header="Файл"/>
 			</MenuItem>
-			
+
 			<MenuItem Header="Справка">
 				<MenuItem Header="О программе..."
 									Command="{Binding ShowAboutCommand}"/>
-				</MenuItem>>
+			</MenuItem> >
 		</Menu>
+
+		<StackPanel DockPanel.Dock="Bottom"
+		            Orientation="Horizontal" HorizontalAlignment="Right">
+			<Button Content="Очистить"
+			        Margin="3,3,5,3"
+			        Command="{Binding CleanCommand}"
+			        HorizontalAlignment="Center"
+			        VerticalAlignment="Center"/>
+
+		</StackPanel>
+
+		<Grid>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition />
+			</Grid.RowDefinitions>
+
+			<StackPanel Grid.Row="0"
+			            Orientation="Horizontal">
+				<TextBlock Text="Путь сохранения"
+				           Margin="2,2,2,2"
+				           VerticalAlignment="Center"/>
+				<TextBox Width="Auto" 
+				         Margin="2,2,2,2"
+								 TextAlignment="Left"
+								 VerticalAlignment="Center"
+								 Text ="{Binding SavePath}"/>
+				<Button Content="Выбрать"
+				        Margin="2,2,2,2"
+				        Command="{Binding SelectPathCommand}"
+				        VerticalAlignment="Center"/>
+
+			</StackPanel>
+		</Grid>
+
 
 	</DockPanel>
 </Window>
