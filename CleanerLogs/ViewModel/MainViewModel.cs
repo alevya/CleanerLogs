@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -7,14 +8,24 @@ namespace CleanerLogs.ViewModel
 {
   internal class MainViewModel : BaseViewModel
   {
-    #region Initialize
+    private string _savePath;
 
-    #endregion
-
+    public MainViewModel()
+    {
+      _savePath = Path.GetTempPath();
+    }
 
     #region Properties
 
-    public string SavePath { get; set; }
+    public string SavePath
+    {
+      get { return _savePath; }
+      set
+      {
+        _savePath = value;
+        OnPropertyChanged("SavePath");
+      }
+    }
 
     #endregion
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel;
 
 
 namespace CleanerLogs.ViewModel
@@ -14,6 +10,11 @@ namespace CleanerLogs.ViewModel
     protected virtual void OnPropertyChanged(string propertyName)
     {
       PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected virtual void OnPropertyChanged(PropertyChangedEventArgs args)
+    {
+      PropertyChanged?.Invoke(this, args);
     }
   }
 }
