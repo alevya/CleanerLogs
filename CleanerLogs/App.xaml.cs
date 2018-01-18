@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using CleanerLogs.ViewModel;
+using CleanerLogs.ViewModels;
 
 namespace CleanerLogs
 {

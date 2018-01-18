@@ -5,6 +5,8 @@ namespace CleanerLogs.ViewModel
 {
   internal abstract class BaseViewModel : INotifyPropertyChanged
   {
+    #region INotifyPropertyChanged Implements
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged(string propertyName)
@@ -16,5 +18,7 @@ namespace CleanerLogs.ViewModel
     {
       PropertyChanged?.Invoke(this, args);
     }
+
+    #endregion
   }
 }
