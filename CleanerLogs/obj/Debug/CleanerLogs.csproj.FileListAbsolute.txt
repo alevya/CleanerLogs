@@ -12,3 +12,6 @@ D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csproj.GenerateResourc
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csproj.CoreCompileInputs.cache
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.exe
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.pdb
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\FolderEntry.g.cs
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\FolderEntry.baml
