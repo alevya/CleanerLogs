@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Configuration;
 using System.Windows.Input;
 using CleanerLogs.Commands;
 using CleanerLogs.ViewModel;
@@ -13,6 +14,8 @@ namespace CleanerLogs.ViewModels
     {
       _savePath = Path.GetTempPath();
       CleanCommand = new DelegateCommand(Clean);
+
+      var m = ConfigurationManager.GetSection("Machines");
     }
 
     #region Properties
