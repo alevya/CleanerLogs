@@ -1,0 +1,38 @@
+﻿<Window x:Class="CleanerLogs.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CleanerLogs"
+        mc:Ignorable="d"
+				WindowStyle="SingleBorderWindow"
+        Title="Foreman - Сохранение и очистка лог-файлов"
+				Icon ="Resources/MainIcon.ico"
+        Height="350" Width="525">
+
+	<DockPanel Name="MainDockPanel">
+		<Menu DockPanel.Dock="Top"
+		      VerticalAlignment="Top" VerticalContentAlignment="Center"
+				  HorizontalContentAlignment="Left"
+					Padding="1,1">
+
+			<Menu.ItemsPanel>
+				<ItemsPanelTemplate>
+					<VirtualizingStackPanel Orientation="Horizontal"
+										  VerticalAlignment="{Binding VerticalContentAlignment,  RelativeSource = {RelativeSource Mode=TemplatedParent}}">
+					</VirtualizingStackPanel>
+				</ItemsPanelTemplate>
+			</Menu.ItemsPanel>
+			
+			<MenuItem Header="Настройки">
+				<MenuItem Header="Файл"/>
+			</MenuItem>
+			
+			<MenuItem Header="Справка">
+				<MenuItem Header="О программе..."
+									Command="{Binding ShowAboutCommand}"/>
+				</MenuItem>>
+		</Menu>
+
+	</DockPanel>
+</Window>

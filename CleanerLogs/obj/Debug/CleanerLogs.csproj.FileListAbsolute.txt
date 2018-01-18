@@ -1,0 +1,14 @@
+D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\CleanerLogs.exe
+D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\CleanerLogs.pdb
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csprojResolveAssemblyReference.cache
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\MainWindow.g.cs
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\App.g.cs
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs_MarkupCompile.cache
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs_MarkupCompile.lref
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\MainWindow.baml
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.g.resources
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.Properties.Resources.resources
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csproj.GenerateResource.Cache
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csproj.CoreCompileInputs.cache
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.exe
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.pdb
