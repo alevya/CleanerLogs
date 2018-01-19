@@ -4,6 +4,7 @@ namespace CleanerLogs
 {
   public class MachinesConfigSection : ConfigurationSection
   {
+
     [ConfigurationProperty("Machines")]
     public MachinesCollection MachineItems
     {
