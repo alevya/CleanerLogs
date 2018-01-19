@@ -54,18 +54,20 @@
 		</StackPanel>
 
 		<Grid>
-
 			<Grid.RowDefinitions>
-				<RowDefinition Height="*"/>
-				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
+
 
 			<HeaderedContentControl Grid.Row="0">
 				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
-				
-				<ScrollViewer>
+
+			<ScrollViewer CanContentScroll="True">
+				<StackPanel >
 					<ListView ItemsSource="{Binding Path= MachinesDetails}"></ListView>
-				</ScrollViewer>
+				</StackPanel>
+			</ScrollViewer>
 
 			</HeaderedContentControl>
 
@@ -79,9 +81,7 @@
 				>
 				</views:FolderEntry>
 			</StackPanel>
-
 		</Grid>
-
 
 	</DockPanel>
 </Window>

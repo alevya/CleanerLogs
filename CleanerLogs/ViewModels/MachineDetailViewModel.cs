@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using CleanerLogs.ViewModel;
+﻿using CleanerLogs.ViewModel;
 
 namespace CleanerLogs.ViewModels
 {
