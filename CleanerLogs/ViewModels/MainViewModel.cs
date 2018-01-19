@@ -13,7 +13,6 @@ namespace CleanerLogs.ViewModels
 
     public MainViewModel()
     {
-      //_savePath = Path.GetTempPath();
       CleanCommand = new DelegateCommand(Clean);
     }
 

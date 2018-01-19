@@ -50,21 +50,32 @@
 		<Grid>
 
 			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
 				<RowDefinition Height="Auto"/>
-				<RowDefinition />
 			</Grid.RowDefinitions>
 
-			<StackPanel Grid.Row="0"
+			<HeaderedContentControl Grid.Row="0">
+				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
+				
+				<ScrollViewer>
+					<ContentControl Content="{Binding Path=SelectedItem, ElementName=}">
+
+					</ContentControl>
+				</ScrollViewer>
+
+			</HeaderedContentControl>
+
+			<StackPanel Grid.Row="1"
 			            Orientation="Horizontal">
 				<TextBlock Text="Путь сохранения"
 				           Margin="2,2,2,2"
 				           VerticalAlignment="Center"/>
 				<views:FolderEntry Text="{Binding SavePath}"
 				                   Description="Выбор места сохранения лог-файлов"
-				                   >
+				>
 				</views:FolderEntry>
-
 			</StackPanel>
+
 		</Grid>
 
 
