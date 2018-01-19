@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanerLogs"
+				xmlns:cmd="clr-namespace:CleanerLogs.Commands"
 				xmlns:views="clr-namespace:CleanerLogs.Views"
 				xmlns:viewmodels="clr-namespace:CleanerLogs.ViewModels"
         mc:Ignorable="d"
@@ -44,7 +45,7 @@
 		</Menu>
 
 		<StackPanel DockPanel.Dock="Bottom"
-		            Orientation="Horizontal" HorizontalAlignment="Right">
+		            Orientation="Horizontal" HorizontalAlignment="Left">
 			<Button Content="Очистить"
 			        Margin="3,3,5,3"
 			        Command="{Binding CleanCommand}"
@@ -63,9 +64,19 @@
 			<HeaderedContentControl Grid.Row="0">
 				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
 
+				
 			<ScrollViewer CanContentScroll="True">
-				<StackPanel >
-					<ListView ItemsSource="{Binding Path= MachinesDetails}"></ListView>
+				
+					<StackPanel >
+						<CheckBox x:Name="chAll" Content="Выбрать все" 
+						          Command="{Binding SelectAllCommand}"
+											CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}"
+											
+						          >
+								
+						</CheckBox>
+						<ListView ItemsSource="{Binding Path= MachinesDetails}">
+						</ListView>
 				</StackPanel>
 			</ScrollViewer>
 

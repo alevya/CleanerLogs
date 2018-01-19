@@ -4,6 +4,7 @@ using System.IO;
 using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using CleanerLogs.Commands;
 using CleanerLogs.ViewModel;
 
@@ -16,6 +17,7 @@ namespace CleanerLogs.ViewModels
     public MainViewModel()
     {
       CleanCommand = new DelegateCommand(Clean);
+      SelectAllCommand = new DelegateCommand(SelectAll);
     }
 
     #region Properties
@@ -36,7 +38,7 @@ namespace CleanerLogs.ViewModels
 
     #region Command
     public ICommand CleanCommand { get; }
-
+    public ICommand SelectAllCommand { get; }
     #endregion
 
     #region Methods
@@ -69,6 +71,19 @@ namespace CleanerLogs.ViewModels
 
     private void Clean(object obj)
     {
+
+    }
+
+    private void SelectAll(object obj)
+    {
+      bool isChecked = (bool) obj;
+      //if (isChecked)
+      //{
+        foreach (var item in MachinesDetails)
+        {
+          item.IsSelected = isChecked;
+        }
+      //}
 
     }
     #endregion
