@@ -9,7 +9,7 @@
 				WindowStyle="SingleBorderWindow"
 				WindowStartupLocation="CenterScreen"
         Title="Foreman - Сохранение и очистка лог-файлов"
-				Icon ="Resources/MainIcon.ico"
+				Icon ="/CleanerLogs;component/Resources/MainIcon.ico"
         Height="350" Width="525
 				">
 

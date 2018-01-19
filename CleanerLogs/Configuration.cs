@@ -39,7 +39,7 @@ namespace CleanerLogs
 
     protected override object GetElementKey(ConfigurationElement element)
     {
-      return ((MachineElement) element).MachineIp;
+      return ((MachineElement) element).MachineNumber;
     }
 
     public MachineElement this[int index]

@@ -15,7 +15,7 @@ namespace CleanerLogs.ViewModels
       _savePath = Path.GetTempPath();
       CleanCommand = new DelegateCommand(Clean);
 
-      var m = ConfigurationManager.GetSection("Machines");
+      var m = ConfigurationManager.GetSection("StartupMachines");
     }
 
     #region Properties
