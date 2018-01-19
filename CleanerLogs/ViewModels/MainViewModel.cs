@@ -2,8 +2,10 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
+using System.Linq;
 using System.Windows.Input;
 using CleanerLogs.Commands;
+using CleanerLogs.Request;
 using CleanerLogs.ViewModel;
 
 namespace CleanerLogs.ViewModels
@@ -67,7 +69,11 @@ namespace CleanerLogs.ViewModels
 
     private void Clean(object obj)
     {
+      var md = MachinesDetails.SingleOrDefault(item => item.IsSelected);
+      if(md == null) return;
 
+      var ftpLoader = new FtpLoader(md.Ip);
+      ftpLoader.ListFilesAsync("USBDisk/Foreman7");
     }
 
     private void SelectAll(object obj)
