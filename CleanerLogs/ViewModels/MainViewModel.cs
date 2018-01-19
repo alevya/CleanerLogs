@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Configuration;
 using System.Windows.Input;
 using CleanerLogs.Commands;
@@ -12,10 +13,8 @@ namespace CleanerLogs.ViewModels
 
     public MainViewModel()
     {
-      _savePath = Path.GetTempPath();
+      //_savePath = Path.GetTempPath();
       CleanCommand = new DelegateCommand(Clean);
-
-      var m = ConfigurationManager.GetSection("StartupMachines");
     }
 
     #region Properties
@@ -38,6 +37,24 @@ namespace CleanerLogs.ViewModels
     #endregion
 
     #region Methods
+
+    public void InitConfig()
+    {
+      var m = ConfigurationManager.GetSection("StartupMachines") as MachinesConfigSection;
+      if (m == null || m.MachineItems.Count == 0)
+      {
+        throw new Exception("");
+      }
+      string confSavePath = ConfigurationManager.AppSettings["SavePath"];
+      if (string.IsNullOrEmpty(confSavePath))
+      {
+        SavePath = Path.GetTempPath();
+      }
+      else
+      {
+        
+      }
+    }
 
     private void Clean(object obj)
     {

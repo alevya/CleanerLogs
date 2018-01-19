@@ -18,6 +18,7 @@ namespace CleanerLogs
     {
       base.OnStartup(args);
       var dataContext = new MainViewModel();
+      dataContext.InitConfig();
       MainWindow = new Views.MainWindow
       {
         DataContext = dataContext
