@@ -2,9 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
-using System.Linq;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 using CleanerLogs.Commands;
 using CleanerLogs.ViewModel;
 
@@ -60,8 +58,6 @@ namespace CleanerLogs.ViewModels
         
       }
 
-      //MachinesDetails = new ObservableCollection<MachineElement>(m.MachineItems.OfType<MachineElement>().ToList());
-
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
       {
@@ -76,15 +72,11 @@ namespace CleanerLogs.ViewModels
 
     private void SelectAll(object obj)
     {
-      bool isChecked = (bool) obj;
-      //if (isChecked)
-      //{
-        foreach (var item in MachinesDetails)
-        {
-          item.IsSelected = isChecked;
-        }
-      //}
-
+      var isChecked = (bool) obj;
+      foreach (var item in MachinesDetails)
+      {
+        item.IsSelected = isChecked;
+      }
     }
     #endregion
   }
