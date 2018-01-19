@@ -16,8 +16,10 @@
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 					<ColumnDefinition Width="Auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
-				<TextBlock Grid.Column="1" Text="{Binding Path = Number}"></TextBlock>
-				<TextBlock Grid.Column="2" Text="{Binding Path = Ip}"></TextBlock>
+				<TextBlock Grid.Column="1"  
+				           Text= "{Binding Path=Number}"></TextBlock>
+				<TextBlock Grid.Column="2" 
+				           Text="{Binding Path=Ip}"></TextBlock>
 				<CheckBox Grid.Column="0"
 				          IsChecked="{Binding Path=IsSelected, Mode=TwoWay}"
 				>

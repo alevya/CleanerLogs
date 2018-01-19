@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
+using System.Linq;
 using System.Windows.Input;
 using CleanerLogs.Commands;
 using CleanerLogs.ViewModel;
@@ -30,6 +31,7 @@ namespace CleanerLogs.ViewModels
     }
 
     public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
+    //public ObservableCollection<MachineElement> MachinesDetails { get; set; }
     #endregion
 
     #region Command
@@ -55,6 +57,9 @@ namespace CleanerLogs.ViewModels
       {
         
       }
+
+      //MachinesDetails = new ObservableCollection<MachineElement>(m.MachineItems.OfType<MachineElement>().ToList());
+
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
       {

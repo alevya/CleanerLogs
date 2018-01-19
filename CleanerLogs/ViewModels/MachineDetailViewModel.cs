@@ -4,6 +4,7 @@ namespace CleanerLogs.ViewModels
 {
   internal class MachineDetailViewModel : BaseViewModel
   {
+    private bool _isSelected;
     public MachineDetailViewModel(string number, string ip)
     {
       Number = number;
@@ -14,6 +15,16 @@ namespace CleanerLogs.ViewModels
 
     public string Number { get; }
     public string Ip { get; }
+
+    public bool IsSelected
+    {
+      get { return _isSelected; }
+      set
+      {
+        _isSelected = value;
+        OnPropertyChanged("IsSelected");
+      }
+    }
 
     #endregion
   }
