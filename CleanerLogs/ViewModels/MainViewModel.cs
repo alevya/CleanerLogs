@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
 using System.Windows.Input;
@@ -28,6 +29,7 @@ namespace CleanerLogs.ViewModels
       }
     }
 
+    public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
     #endregion
 
     #region Command
@@ -52,6 +54,11 @@ namespace CleanerLogs.ViewModels
       else
       {
         
+      }
+      MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
+      foreach (MachineElement item in m.MachineItems)
+      {
+        MachinesDetails.Add(new MachineDetailViewModel(item.MachineNumber, item.MachineIp));
       }
     }
 

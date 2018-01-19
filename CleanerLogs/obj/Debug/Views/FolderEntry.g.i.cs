@@ -9,7 +9,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using CleanerLogs;
 using CleanerLogs.Views;
 using System;
 using System.Diagnostics;

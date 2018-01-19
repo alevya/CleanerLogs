@@ -16,3 +16,5 @@ D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\FolderEntry.baml
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\MainWindow.g.cs
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\MainWindow.baml
 D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\CleanerLogs.exe.config
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\MachineDetailView.g.cs
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\Views\MachineDetailView.baml

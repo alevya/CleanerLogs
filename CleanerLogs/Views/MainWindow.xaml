@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanerLogs"
 				xmlns:views="clr-namespace:CleanerLogs.Views"
+				xmlns:viewmodels="clr-namespace:CleanerLogs.ViewModels"
         mc:Ignorable="d"
 				WindowStyle="SingleBorderWindow"
 				WindowStartupLocation="CenterScreen"
@@ -12,6 +13,11 @@
 				Icon ="/CleanerLogs;component/Resources/MainIcon.ico"
         Height="350" Width="525
 				">
+	<Window.Resources>
+		<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">
+			<views:MachineDetailView/>
+		</DataTemplate>
+	</Window.Resources>
 
 	<DockPanel Name="MainDockPanel">
 		<Menu DockPanel.Dock="Top"
@@ -58,9 +64,7 @@
 				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
 				
 				<ScrollViewer>
-					<ContentControl Content="{Binding Path=SelectedItem, ElementName=}">
-
-					</ContentControl>
+					<ListView ItemsSource="{Binding Path= MachinesDetails}"></ListView>
 				</ScrollViewer>
 
 			</HeaderedContentControl>

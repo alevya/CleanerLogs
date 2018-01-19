@@ -57,6 +57,7 @@
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
+    <Compile Include="ViewModels\MachineDetailViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\FolderEntry.xaml.cs">
       <DependentUpon>FolderEntry.xaml</DependentUpon>
