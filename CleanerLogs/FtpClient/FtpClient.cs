@@ -8,7 +8,7 @@ namespace CleanerLogs.FtpClient
 {
   internal class FtpClient
   {
-    public String Server { get;}
+    public string Server { get;}
 
     public FtpClient(string server)
     {
@@ -58,7 +58,7 @@ namespace CleanerLogs.FtpClient
       return listFiles;
     }
 
-    public string DownloadFile(string source, string target)
+    public FtpStatusCode DownloadFile(string source, string target)
     {
       var request = GetRequest(source, WebRequestMethods.Ftp.DownloadFile);
 
@@ -70,12 +70,12 @@ namespace CleanerLogs.FtpClient
           {
             stream.CopyTo(fs, 4096);
           }
-          return response.StatusDescription;
+          return response.StatusCode;
         }
       }
     }
 
-    public async Task<string> DownloadFileAsync(string source, string target)
+    public async Task<FtpStatusCode> DownloadFileAsync(string source, string target)
     {
       var request = GetRequest(source, WebRequestMethods.Ftp.DownloadFile);
 
@@ -88,10 +88,42 @@ namespace CleanerLogs.FtpClient
             await stream.CopyToAsync(fs, 4096);
           }
         }
-        return response.StatusDescription;
+        //return response.StatusCode;
       }
-
+      return await GetStatusCodeAsync(request);
     }
+
+    public FtpStatusCode DeleteFile(string targetPath)
+    {
+      var request = GetRequest(targetPath, WebRequestMethods.Ftp.DeleteFile);
+      using (var response = (FtpWebResponse)request.GetResponse())
+      {
+        return response.StatusCode;
+      }
+    }
+
+    public async Task<FtpStatusCode> DeleteFileAsync(string targetPath)
+    {
+      var request = GetRequest(targetPath, WebRequestMethods.Ftp.DeleteFile);
+      return await GetStatusCodeAsync(request);
+    }
+
+    private FtpStatusCode GetStatusCode(FtpWebRequest request)
+    {
+      using (var response = (FtpWebResponse)request.GetResponse())
+      {
+        return response.StatusCode;
+      }
+    }
+
+    private async Task<FtpStatusCode> GetStatusCodeAsync(FtpWebRequest request)
+    {
+      using (var response = (FtpWebResponse)await request.GetResponseAsync())
+      {
+        return response.StatusCode;
+      }
+    }
+
 
     private Uri GetServerUri(string path)
     {

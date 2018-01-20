@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using CleanerLogs.Commands;
@@ -102,14 +103,23 @@ namespace CleanerLogs.ViewModels
       {
         var pathSrc = Path.Combine(pathUSBDisk, fileSrc);
         var pathTrg = Path.Combine(diUSBDisk.FullName,fileSrc);
-        await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+        if (result == FtpStatusCode.ClosingData)
+        {
+          await ftpLoader.DeleteFileAsync(pathSrc);
+        }
       }
 
       foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(".log")))
       {
         var pathSrc = Path.Combine(pathNandFlash, fileSrc);
         var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
-        string res = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+
+        if (result == FtpStatusCode.ClosingData)
+        {
+          await ftpLoader.DeleteFileAsync(pathSrc);
+        }
       }
       MessageBox.Show("Success");
     }
