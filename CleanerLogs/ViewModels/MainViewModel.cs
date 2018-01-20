@@ -6,8 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using CleanerLogs.Commands;
-using CleanerLogs.FtpClient;
-using CleanerLogs.Request;
 using CleanerLogs.ViewModel;
 
 namespace CleanerLogs.ViewModels

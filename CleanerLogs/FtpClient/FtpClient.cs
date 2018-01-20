@@ -3,26 +3,23 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using CleanerLogs.Request;
 
 namespace CleanerLogs.FtpClient
 {
   internal class FtpClient
   {
-    public string Server { get;}
+    public String Server { get;}
 
     public FtpClient(string server)
     {
       Server = server;
     }
 
-    public IEnumerable<string> ListFiles(string path)
+    public IEnumerable<String> ListFiles(string path)
     {
-      var listFiles = new List<string>();
-      var ftpState = new FtpState();
+      var listFiles = new List<String>();
       var request = GetRequest(path, WebRequestMethods.Ftp.ListDirectory);
 
-      
       using (var response = (FtpWebResponse)request.GetResponse())
       {
         using (var stream = response.GetResponseStream())
@@ -61,14 +58,6 @@ namespace CleanerLogs.FtpClient
       return listFiles;
     }
 
-    /*
-    public Task ReadAsync(Stream stream, IEnumerable<string> list)
-    {
-      var tcs = new TaskCompletionSource<int>();
-      stream.
-    }
-    */
-
     public string DownloadFile(string source, string target)
     {
       var request = GetRequest(source, WebRequestMethods.Ftp.DownloadFile);
@@ -102,22 +91,6 @@ namespace CleanerLogs.FtpClient
         return response.StatusDescription;
       }
 
-    }
-
-    private void CallbackList(IAsyncResult ar)
-    {
-      var state = (FtpState) ar.AsyncState;
-      Stream reqStream = null;
-      try
-      {
-        reqStream = state.Request.EndGetRequestStream(ar);
-
-      }
-      catch (Exception e)
-      {
-        
-        throw;
-      }
     }
 
     private Uri GetServerUri(string path)
