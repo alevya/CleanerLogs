@@ -60,8 +60,8 @@
     <Compile Include="Commands\CommandBehavior.cs" />
     <Compile Include="Commands\DelegateCommand.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Request\FtpLoader.cs" />
-    <Compile Include="Request\FtpState.cs" />
+    <Compile Include="FtpClient\FtpClient.cs" />
+    <Compile Include="FtpClient\FtpState.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\MachineDetailViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

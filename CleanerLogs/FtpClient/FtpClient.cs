@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using CleanerLogs.Request;
 
-namespace CleanerLogs.Request
+namespace CleanerLogs.FtpClient
 {
-  internal class FtpLoader
+  internal class FtpClient
   {
     public string Server { get;}
 
-    public FtpLoader(string server)
+    public FtpClient(string server)
     {
       Server = server;
     }

@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
 using CleanerLogs.Commands;
+using CleanerLogs.FtpClient;
 using CleanerLogs.Request;
 using CleanerLogs.ViewModel;
 
@@ -72,7 +73,7 @@ namespace CleanerLogs.ViewModels
       var md = MachinesDetails.SingleOrDefault(item => item.IsSelected);
       if(md == null) return;
 
-      var ftpLoader = new FtpLoader(md.Ip);
+      var ftpLoader = new FtpClient.FtpClient(md.Ip);
       ftpLoader.ListFilesAsync("USBDisk/Foreman7");
     }
 
