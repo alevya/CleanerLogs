@@ -15,9 +15,9 @@
         Height="350" Width="525
 				">
 	<Window.Resources>
-		<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">
+		<!--<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">
 			<views:MachineDetailView/>
-		</DataTemplate>
+		</DataTemplate>-->
 	</Window.Resources>
 
 	<DockPanel Name="MainDockPanel">
@@ -65,7 +65,7 @@
 				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
 
 				
-			<ScrollViewer CanContentScroll="True">
+			<!--<ScrollViewer CanContentScroll="True">-->
 				
 					<StackPanel >
 						<CheckBox x:Name="chAll" Content="Выбрать все" 
@@ -76,9 +76,27 @@
 								
 						</CheckBox>
 						<ListView ItemsSource="{Binding Path= MachinesDetails}">
+							<ListView.View>
+								<GridView>
+									<GridView.Columns>
+										<GridViewColumn>
+											<GridViewColumn.CellTemplate>
+												<DataTemplate>
+													
+														<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+													
+												</DataTemplate>
+											</GridViewColumn.CellTemplate>
+											
+										</GridViewColumn>
+										<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
+										<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
+								</GridView.Columns>
+								</GridView>
+							</ListView.View>
 						</ListView>
 				</StackPanel>
-			</ScrollViewer>
+			<!--</ScrollViewer>-->
 
 			</HeaderedContentControl>
 

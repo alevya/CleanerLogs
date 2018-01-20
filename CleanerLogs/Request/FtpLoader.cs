@@ -24,7 +24,7 @@ namespace CleanerLogs.Request
       var ftpState = new FtpState();
       var request = (FtpWebRequest) WebRequest.Create(uri);
       request.Method = WebRequestMethods.Ftp.ListDirectory;
-      request.Credentials = new NetworkCredential("anonymous", "anonymous");
+      request.Credentials = new NetworkCredential("root", "admin");//new NetworkCredential("anonymous", "anonymous");
 
       ftpState.Request = request;
       request.BeginGetResponse(CallbackList, ftpState);
