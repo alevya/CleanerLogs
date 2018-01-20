@@ -36,3 +36,4 @@ E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csproj.Cor
 E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.exe
 E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.pdb
 E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\bin\Debug\App.config
+E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csprojResolveAssemblyReference.cache

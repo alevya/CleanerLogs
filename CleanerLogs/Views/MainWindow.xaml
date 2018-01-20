@@ -61,8 +61,8 @@
 			</Grid.RowDefinitions>
 
 
-			<HeaderedContentControl Grid.Row="0">
-				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>
+			<!--<HeaderedContentControl Grid.Row="0">
+				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>-->
 
 				
 			<!--<ScrollViewer CanContentScroll="True">-->
@@ -98,7 +98,7 @@
 				</StackPanel>
 			<!--</ScrollViewer>-->
 
-			</HeaderedContentControl>
+			<!--</HeaderedContentControl>-->
 
 			<StackPanel Grid.Row="1"
 			            Orientation="Horizontal">
