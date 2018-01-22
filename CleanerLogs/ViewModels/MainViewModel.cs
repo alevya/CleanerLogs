@@ -58,6 +58,10 @@ namespace CleanerLogs.ViewModels
       set
       {
         _zipped = value;
+        var cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        var cZipped = cfg.AppSettings.Settings["Zipped"];
+        cZipped.Value =  _zipped.ToString();
+        cfg.Save();
         OnPropertyChanged();
       }
     }

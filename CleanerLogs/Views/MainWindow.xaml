@@ -106,9 +106,10 @@
 				           Margin="2,2,2,2"
 				           VerticalAlignment="Center"/>
 				<views:FolderEntry Text="{Binding SavePath}"
-				                   Description="Выбор места сохранения лог-файлов"
-				>
+				                   Description="Выбор места сохранения лог-файлов">
 				</views:FolderEntry>
+				<CheckBox Content="Архивировать" Margin="2,2,2,2" IsChecked="{Binding Zipped}"
+				          VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 		</Grid>
 
