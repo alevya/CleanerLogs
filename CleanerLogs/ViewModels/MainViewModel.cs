@@ -14,9 +14,11 @@ namespace CleanerLogs.ViewModels
 {
   internal class MainViewModel : BaseViewModel
   {
-    private const string USBDISK_FOREMAN = @"USBDisk\Foreman7";
-    private const string NANDFLASH_FOREMAN = @"NandFlash\Foreman7";
-
+    private const string FILE_EXTENSIONS = ".log";
+    private const string FOREMAN = "Foreman7";
+    private const string USBDISK = "USBDisk";
+    private const string NANDFLASH = "NandFlash";
+    
     private string _savePath;
     private bool _removeFromBlocks;
 
@@ -126,15 +128,15 @@ namespace CleanerLogs.ViewModels
     {
       var ftpLoader = new FtpClient.FtpClient(ip);
     
-      var listUSBDisk = await ftpLoader.ListFilesAsync(USBDISK_FOREMAN);
-      var listNandFlash = await ftpLoader.ListFilesAsync(NANDFLASH_FOREMAN);
+      var listUSBDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
+      var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
 
-      var diUSBDisk = Directory.CreateDirectory(Path.Combine(SavePath, "USBDisk"));
-      var diNandFlash = Directory.CreateDirectory(Path.Combine(SavePath, "NandFlash"));
+      var diUSBDisk = Directory.CreateDirectory(Path.Combine(SavePath, ip, USBDISK));
+      var diNandFlash = Directory.CreateDirectory(Path.Combine(SavePath, ip, NANDFLASH));
 
-      foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(".log")))
+      foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
       {
-        var pathSrc = Path.Combine(USBDISK_FOREMAN, fileSrc);
+        var pathSrc = Path.Combine(BuildRemotePath(USBDISK), fileSrc);
         var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
         if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
@@ -143,9 +145,9 @@ namespace CleanerLogs.ViewModels
         }
       }
 
-      foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(".log")))
+      foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
       {
-        var pathSrc = Path.Combine(NANDFLASH_FOREMAN, fileSrc);
+        var pathSrc = Path.Combine(BuildRemotePath(NANDFLASH), fileSrc);
         var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
 
@@ -155,6 +157,11 @@ namespace CleanerLogs.ViewModels
         }
       }
 
+    }
+
+    private string BuildRemotePath(string nameRootPath)
+    {
+      return Path.Combine(nameRootPath, FOREMAN);
     }
 
     private void SelectAll(object obj)
