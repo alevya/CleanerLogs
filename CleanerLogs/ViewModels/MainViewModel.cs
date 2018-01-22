@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -47,7 +46,7 @@ namespace CleanerLogs.ViewModels
     }
 
     public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
-    //public ObservableCollection<MachineElement> MachinesDetails { get; set; }
+  
     #endregion
 
     #region Command
@@ -83,14 +82,13 @@ namespace CleanerLogs.ViewModels
       var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
 
       const int CONCURRENCY_LEVEL = 3;
-      var mapTasks = new Dictionary<Task, string>(); //new ConcurrentDictionary<Task, string>();
-      var result = new Dictionary<string, bool>();   //(new ConcurrentDictionary<string, bool>());
+      var mapTasks = new Dictionary<Task, string>(); 
+      var result = new Dictionary<string, bool>(); 
       int nextIndex = 0;
 
       while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
       {
         string ip = listMd.ElementAt(nextIndex).Ip;
-        //mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
         mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
       }
@@ -98,13 +96,10 @@ namespace CleanerLogs.ViewModels
       {
         try
         {
-          //Task resultTask = await Task.WhenAny(mapTasks.Keys);
-          //mapTasks.TryRemove(resultTask, out string ipValue);
           Task resultTask = await Task.WhenAny(mapTasks.Keys);
           mapTasks.TryGetValue(resultTask, out string ipValue);
-          mapTasks.Remove(resultTask);// TryRemove(resultTask, out string ipValue);
+          mapTasks.Remove(resultTask);
 
-          //result.TryAdd(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
           result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
           await resultTask;
         }
@@ -116,7 +111,6 @@ namespace CleanerLogs.ViewModels
         if(nextIndex >= listMd.Count) continue;
 
         string ip = listMd.ElementAt(nextIndex).Ip;
-        //mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
         mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
 
