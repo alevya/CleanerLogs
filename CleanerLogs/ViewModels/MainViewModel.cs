@@ -22,6 +22,7 @@ namespace CleanerLogs.ViewModels
     
     private string _savePath;
     private bool _removeFromBlocks;
+    private bool _zipped;
 
     public MainViewModel()
     {
@@ -51,6 +52,16 @@ namespace CleanerLogs.ViewModels
       }
     }
 
+    public bool Zipped
+    {
+      get { return _zipped; }
+      set
+      {
+        _zipped = value;
+        OnPropertyChanged();
+      }
+    }
+
     public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
   
     #endregion
@@ -75,6 +86,8 @@ namespace CleanerLogs.ViewModels
       string confRemoveFromBlocks = ConfigurationManager.AppSettings["RemoveFromBlocks"];
       RemoveFromBlocks = bool.TryParse(confRemoveFromBlocks, out _removeFromBlocks) ? _removeFromBlocks : true;
 
+      string confZipped = ConfigurationManager.AppSettings["Zipped"];
+      RemoveFromBlocks = bool.TryParse(confZipped, out _zipped) ? _zipped : true;
 
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
@@ -132,36 +145,61 @@ namespace CleanerLogs.ViewModels
       var listUSBDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
       var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
 
-
       var rootPathTrg = Path.Combine(SavePath, ip);
-      using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
+
+      if (Zipped)
       {
-        //var diUSBDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
-        //var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
+        using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
+        {
+          foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+          {
+            await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
+          }
+          foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+          {
+            await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
+          }
+        }
+      }
+      else
+      {
+        var diUSBDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
+        var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
 
         foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
         {
-          await DoDownloadAsync(fileSrc, USBDISK, ftpLoader, package);
+          var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
+          await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
         }
-
         foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
         {
-
-          await DoDownloadAsync(fileSrc, NANDFLASH, ftpLoader, package);
+          var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
+          await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
         }
       }
     }
 
-    private async Task DoDownloadAsync(string fileNameSrc, string nameRootStorage,  FtpClient.FtpClient ftpLoader, Package zipPackage)
+    private async Task DoDownloadAsync(string fileNameSrc, string pathTrg, string nameRootStorage, FtpClient.FtpClient ftpLoader)
     {
       var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
-      //var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
 
+      var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+
+      if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+      {
+        await ftpLoader.DeleteFileAsync(pathSrc);
+      }
+
+    }
+
+    private async Task DoDownloadZipAsync(string fileNameSrc, Package zipPackage, string nameRootStorage,  FtpClient.FtpClient ftpLoader)
+    {
+      var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
+      
       var partUri = PackUriHelper.CreatePartUri(new Uri(Path.Combine(nameRootStorage, fileNameSrc), UriKind.Relative));
       var packagePart = zipPackage.CreatePart(partUri, System.Net.Mime.MediaTypeNames.Text.Plain, CompressionOption.Normal);
       var result = await ftpLoader.DownloadFileAsync(pathSrc, packagePart.GetStream());
-      //var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-
+     
       if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
       {
         await ftpLoader.DeleteFileAsync(pathSrc);
