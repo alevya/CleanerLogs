@@ -4,11 +4,11 @@
 winexe
 C#
 .cs
-D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\
+D:\Projects\CleanerLogs\CleanerLogs\obj\Release\
 CleanerLogs
 none
 false
-DEBUG;TRACE
+TRACE
 D:\Projects\CleanerLogs\CleanerLogs\App.xaml
 2-1086776507
 
@@ -16,5 +16,5 @@ D:\Projects\CleanerLogs\CleanerLogs\App.xaml
 14-1559601876
 Views\MainWindow.xaml;Views\FolderEntry.xaml;
 
-False
+True
 
