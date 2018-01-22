@@ -1,6 +1,4 @@
-﻿using CleanerLogs.ViewModel;
-
-namespace CleanerLogs.ViewModels
+﻿namespace CleanerLogs.ViewModels
 {
   internal class MachineDetailViewModel : BaseViewModel
   {

@@ -136,7 +136,7 @@ namespace CleanerLogs.FtpClient
 
       var request = (FtpWebRequest)WebRequest.Create(uri);
       request.Method = method;
-      request.Credentials = new NetworkCredential("root", "admin");//new NetworkCredential("anonymous", "anonymous");
+      request.Credentials = new NetworkCredential("anonymous", "anonymous");
 
       return request;
     }

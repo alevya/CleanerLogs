@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using CleanerLogs.Commands;
-using CleanerLogs.ViewModel;
 
 namespace CleanerLogs.ViewModels
 {
   internal class MainViewModel : BaseViewModel
   {
     private string _savePath;
+    private bool _removeFromBlocks;
 
     public MainViewModel()
     {
@@ -32,7 +32,17 @@ namespace CleanerLogs.ViewModels
       set
       {
         _savePath = value;
-        OnPropertyChanged("SavePath");
+        OnPropertyChanged();
+      }
+    }
+
+    public bool RemoveFromBlocks
+    {
+      get { return _removeFromBlocks;}
+      set
+      {
+        _removeFromBlocks = value;
+        OnPropertyChanged();
       }
     }
 
@@ -55,14 +65,7 @@ namespace CleanerLogs.ViewModels
         throw new Exception("");
       }
       string confSavePath = ConfigurationManager.AppSettings["SavePath"];
-      if (string.IsNullOrEmpty(confSavePath))
-      {
-        SavePath = Path.GetTempPath();
-      }
-      else
-      {
-        
-      }
+      SavePath = string.IsNullOrEmpty(confSavePath) ? Path.GetTempPath() : confSavePath;
 
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
@@ -136,17 +139,17 @@ namespace CleanerLogs.ViewModels
       var listUSBDisk = await ftpLoader.ListFilesAsync(pathUSBDisk);
       var listNandFlash = await ftpLoader.ListFilesAsync(pathNandFlash);
 
-      var diUSBDisk = Directory.CreateDirectory(Path.Combine(@"K:\TempFtp", "USBDisk"));
-      var diNandFlash = Directory.CreateDirectory(Path.Combine(@"K:\TempFtp", "NandFlash"));
+      var diUSBDisk = Directory.CreateDirectory(Path.Combine(SavePath, "USBDisk"));
+      var diNandFlash = Directory.CreateDirectory(Path.Combine(SavePath, "NandFlash"));
 
       foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(".log")))
       {
         var pathSrc = Path.Combine(pathUSBDisk, fileSrc);
         var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-        if (result == FtpStatusCode.ClosingData)
+        if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+          //await ftpLoader.DeleteFileAsync(pathSrc);
         }
       }
 
@@ -156,9 +159,9 @@ namespace CleanerLogs.ViewModels
         var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
 
-        if (result == FtpStatusCode.ClosingData)
+        if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+          //await ftpLoader.DeleteFileAsync(pathSrc);
         }
       }
 
