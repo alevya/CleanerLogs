@@ -67,6 +67,10 @@ namespace CleanerLogs.ViewModels
       string confSavePath = ConfigurationManager.AppSettings["SavePath"];
       SavePath = string.IsNullOrEmpty(confSavePath) ? Path.GetTempPath() : confSavePath;
 
+      string confRemoveFromBlocks = ConfigurationManager.AppSettings["RemoveFromBlocks"];
+      RemoveFromBlocks = bool.TryParse(confRemoveFromBlocks, out _removeFromBlocks) ? _removeFromBlocks : true;
+
+
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
       {
@@ -149,7 +153,7 @@ namespace CleanerLogs.ViewModels
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
         if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
         {
-          //await ftpLoader.DeleteFileAsync(pathSrc);
+          await ftpLoader.DeleteFileAsync(pathSrc);
         }
       }
 
@@ -161,7 +165,7 @@ namespace CleanerLogs.ViewModels
 
         if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
         {
-          //await ftpLoader.DeleteFileAsync(pathSrc);
+          await ftpLoader.DeleteFileAsync(pathSrc);
         }
       }
 
