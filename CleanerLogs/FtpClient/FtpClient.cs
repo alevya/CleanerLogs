@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Packaging;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -88,7 +89,20 @@ namespace CleanerLogs.FtpClient
             await stream.CopyToAsync(fs, 4096);
           }
         }
-        //return response.StatusCode;
+      }
+      return await GetStatusCodeAsync(request);
+    }
+
+    public async Task<FtpStatusCode> DownloadFileAsync(string source,  Stream trgStream)
+    {
+      var request = GetRequest(source, WebRequestMethods.Ftp.DownloadFile);
+
+      using (var response = (FtpWebResponse)await request.GetResponseAsync())
+      {
+        using (var stream = response.GetResponseStream())
+        {
+          await stream.CopyToAsync(trgStream, 4096);
+        }
       }
       return await GetStatusCodeAsync(request);
     }

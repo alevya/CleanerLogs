@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
+using System.IO.Packaging;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -131,30 +132,45 @@ namespace CleanerLogs.ViewModels
       var listUSBDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
       var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
 
-      var diUSBDisk = Directory.CreateDirectory(Path.Combine(SavePath, ip, USBDISK));
-      var diNandFlash = Directory.CreateDirectory(Path.Combine(SavePath, ip, NANDFLASH));
 
-      foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+      var rootPathTrg = Path.Combine(SavePath, ip);
+      using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
       {
-        var pathSrc = Path.Combine(BuildRemotePath(USBDISK), fileSrc);
-        var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
-        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-        if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+        //var diUSBDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
+        //var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
+    
+        foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+          var pathSrc = Path.Combine(BuildRemotePath(USBDISK), fileSrc);
+          //var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
+
+          var partUri = PackUriHelper.CreatePartUri(new Uri(Path.Combine(USBDISK, fileSrc), UriKind.Relative));
+          var packagePart = package.CreatePart(partUri, System.Net.Mime.MediaTypeNames.Text.Plain, CompressionOption.Normal);
+          var result = await ftpLoader.DownloadFileAsync(pathSrc, packagePart.GetStream());
+
+          if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+          {
+            await ftpLoader.DeleteFileAsync(pathSrc);
+          }
         }
-      }
 
-      foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
-      {
-        var pathSrc = Path.Combine(BuildRemotePath(NANDFLASH), fileSrc);
-        var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
-        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-
-        if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+        foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+          var pathSrc = Path.Combine(BuildRemotePath(NANDFLASH), fileSrc);
+          //var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
+
+          var partUri = PackUriHelper.CreatePartUri(new Uri(Path.Combine(NANDFLASH, fileSrc), UriKind.Relative));
+          var packagePart = package.CreatePart(partUri, System.Net.Mime.MediaTypeNames.Text.Plain, CompressionOption.Normal);
+          var result = await ftpLoader.DownloadFileAsync(pathSrc, packagePart.GetStream());
+          //var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+
+          if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+          {
+            await ftpLoader.DeleteFileAsync(pathSrc);
+          }
         }
+
+
       }
 
     }
