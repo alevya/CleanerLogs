@@ -14,6 +14,9 @@ namespace CleanerLogs.ViewModels
 {
   internal class MainViewModel : BaseViewModel
   {
+    private const string USBDISK_FOREMAN = @"USBDisk\Foreman7";
+    private const string NANDFLASH_FOREMAN = @"NandFlash\Foreman7";
+
     private string _savePath;
     private bool _removeFromBlocks;
 
@@ -122,18 +125,16 @@ namespace CleanerLogs.ViewModels
     private async Task DownloadAndDeleteAsync(string ip)
     {
       var ftpLoader = new FtpClient.FtpClient(ip);
-      string pathUSBDisk = @"USBDisk\Foreman7";
-      string pathNandFlash = @"NandFlash\Foreman7";
-
-      var listUSBDisk = await ftpLoader.ListFilesAsync(pathUSBDisk);
-      var listNandFlash = await ftpLoader.ListFilesAsync(pathNandFlash);
+    
+      var listUSBDisk = await ftpLoader.ListFilesAsync(USBDISK_FOREMAN);
+      var listNandFlash = await ftpLoader.ListFilesAsync(NANDFLASH_FOREMAN);
 
       var diUSBDisk = Directory.CreateDirectory(Path.Combine(SavePath, "USBDisk"));
       var diNandFlash = Directory.CreateDirectory(Path.Combine(SavePath, "NandFlash"));
 
       foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(".log")))
       {
-        var pathSrc = Path.Combine(pathUSBDisk, fileSrc);
+        var pathSrc = Path.Combine(USBDISK_FOREMAN, fileSrc);
         var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
         if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
@@ -144,7 +145,7 @@ namespace CleanerLogs.ViewModels
 
       foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(".log")))
       {
-        var pathSrc = Path.Combine(pathNandFlash, fileSrc);
+        var pathSrc = Path.Combine(NANDFLASH_FOREMAN, fileSrc);
         var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
         var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
 
