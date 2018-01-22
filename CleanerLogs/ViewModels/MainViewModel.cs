@@ -87,7 +87,7 @@ namespace CleanerLogs.ViewModels
       RemoveFromBlocks = bool.TryParse(confRemoveFromBlocks, out _removeFromBlocks) ? _removeFromBlocks : true;
 
       string confZipped = ConfigurationManager.AppSettings["Zipped"];
-      RemoveFromBlocks = bool.TryParse(confZipped, out _zipped) ? _zipped : true;
+      Zipped = bool.TryParse(confZipped, out _zipped) ? _zipped : true;
 
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
@@ -142,8 +142,11 @@ namespace CleanerLogs.ViewModels
     {
       var ftpLoader = new FtpClient.FtpClient(ip);
     
-      var listUSBDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
+      var listUsbDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
       var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
+
+      var logsUsbDisk = listUsbDisk.Where(file => file.EndsWith(FILE_EXTENSIONS));
+      var logsNandDisk = listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS));
 
       var rootPathTrg = Path.Combine(SavePath, ip);
 
@@ -151,11 +154,11 @@ namespace CleanerLogs.ViewModels
       {
         using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
         {
-          foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+          foreach (var fileSrc in logsUsbDisk)
           {
             await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
           }
-          foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+          foreach (var fileSrc in logsNandDisk)
           {
             await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
           }
@@ -163,15 +166,15 @@ namespace CleanerLogs.ViewModels
       }
       else
       {
-        var diUSBDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
+        var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
         var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
 
-        foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+        foreach (var fileSrc in logsUsbDisk)
         {
-          var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
+          var pathTrg = Path.Combine(diUsbDisk.FullName, fileSrc);
           await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
         }
-        foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS)))
+        foreach (var fileSrc in logsNandDisk)
         {
           var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
           await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
