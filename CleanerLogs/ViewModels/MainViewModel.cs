@@ -78,44 +78,34 @@ namespace CleanerLogs.ViewModels
       }
     }
 
-    private void Clean(object obj)
-    {
-      var md = MachinesDetails.SingleOrDefault(item => item.IsSelected);
-      if(md == null) return;
-
-      var ftpLoader = new FtpClient.FtpClient(md.Ip);
-      var list = ftpLoader.ListFiles("USBDisk/Foreman7");
-      foreach (var fileSrc in list)
-      {
-        var pathSrc = Path.Combine("USBDisk/Foreman7", fileSrc);
-        var pathTrg = Path.Combine(@"K:\TempFtp", fileSrc);
-        ftpLoader.DownloadFile(pathSrc, pathTrg);
-      }
-
-    }
-
     private async void CleanAsync(object obj)
     {
       var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
 
       const int CONCURRENCY_LEVEL = 3;
-      var mapTasks = new ConcurrentDictionary<Task, string>();
-      var result = new ConcurrentDictionary<string, bool>();
+      var mapTasks = new Dictionary<Task, string>(); //new ConcurrentDictionary<Task, string>();
+      var result = new Dictionary<string, bool>();   //(new ConcurrentDictionary<string, bool>());
       int nextIndex = 0;
 
       while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
       {
         string ip = listMd.ElementAt(nextIndex).Ip;
-        mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
+        //mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
+        mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
       }
       while (mapTasks.Count > 0)
       {
         try
         {
+          //Task resultTask = await Task.WhenAny(mapTasks.Keys);
+          //mapTasks.TryRemove(resultTask, out string ipValue);
           Task resultTask = await Task.WhenAny(mapTasks.Keys);
-          mapTasks.TryRemove(resultTask, out string ipValue);
-          result.TryAdd(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
+          mapTasks.TryGetValue(resultTask, out string ipValue);
+          mapTasks.Remove(resultTask);// TryRemove(resultTask, out string ipValue);
+
+          //result.TryAdd(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
+          result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
           await resultTask;
         }
         catch (Exception exc)
@@ -126,7 +116,8 @@ namespace CleanerLogs.ViewModels
         if(nextIndex >= listMd.Count) continue;
 
         string ip = listMd.ElementAt(nextIndex).Ip;
-        mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
+        //mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
+        mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
 
       }
