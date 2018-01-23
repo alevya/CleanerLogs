@@ -61,7 +61,6 @@
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
-
 			<!--<HeaderedContentControl Grid.Row="0">
 				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>-->
 
@@ -76,35 +75,29 @@
 
 			</DockPanel>
 
-
 			<DockPanel Grid.Row="1">
-					<ScrollViewer >
-					<ListView ItemsSource="{Binding Path= MachinesDetails}">
-							<ListView.View>
-								<GridView>
-									<GridView.Columns>
-										<GridViewColumn>
-											<GridViewColumn.CellTemplate>
-												<DataTemplate>
-													
-														<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
-													
-												</DataTemplate>
-											</GridViewColumn.CellTemplate>
-											
-										</GridViewColumn>
-										<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
-										<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
-								</GridView.Columns>
-								</GridView>
-							</ListView.View>
-						</ListView>
-					</ScrollViewer>
+				<ListView ItemsSource="{Binding Path= MachinesDetails}">
+					<ListView.View>
+						<GridView>
+							<GridView.Columns>
+								<GridViewColumn>
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+
+											<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+
+								</GridViewColumn>
+								<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
+								<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
+							</GridView.Columns>
+						</GridView>
+					</ListView.View>
+				</ListView>
 			</DockPanel>
-
-			
 			<!--</HeaderedContentControl>-->
-
 			<StackPanel Grid.Row="2"
 			            Orientation="Horizontal">
 				<TextBlock Text="Путь сохранения"
