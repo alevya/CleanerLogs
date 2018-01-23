@@ -81,6 +81,16 @@
 						<GridView>
 							<GridView.Columns>
 								<GridViewColumn>
+									<!--<GridViewColumn.HeaderTemplate>
+										<DataTemplate>
+											<CheckBox x:Name="chAll"  
+											          Command="{Binding SelectAllCommand}"
+											          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
+											</CheckBox>
+
+										</DataTemplate>
+
+									</GridViewColumn.HeaderTemplate>-->
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 
@@ -88,8 +98,8 @@
 
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
-
 								</GridViewColumn>
+
 								<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
 								<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
 							</GridView.Columns>
