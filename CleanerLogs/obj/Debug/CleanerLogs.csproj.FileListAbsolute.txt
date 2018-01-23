@@ -1,6 +1,5 @@
 D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\CleanerLogs.exe
 D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\CleanerLogs.pdb
-D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csprojResolveAssemblyReference.cache
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\App.g.cs
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs_MarkupCompile.cache
 D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs_MarkupCompile.lref

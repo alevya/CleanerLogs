@@ -19,10 +19,6 @@ namespace CleanerLogs.ViewModels
     private const string FOREMAN = "Foreman7";
     private const string USBDISK = "USBDisk";
     private const string NANDFLASH = "NandFlash";
-    
-    private string _savePath;
-    private bool _removeFromBlocks;
-    private bool _zipped;
 
     public MainViewModel()
     {
@@ -34,34 +30,29 @@ namespace CleanerLogs.ViewModels
 
     public string SavePath
     {
-      get { return _savePath; }
+      get
+      {
+        var cSavePath = ConfigurationApp.SavePath;
+        return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
+      }
       set
       {
-        _savePath = value;
+        ConfigurationApp.SavePath = value;
         OnPropertyChanged();
       }
     }
 
     public bool RemoveFromBlocks
     {
-      get { return _removeFromBlocks;}
-      set
-      {
-        _removeFromBlocks = value;
-        OnPropertyChanged();
-      }
+      get { return ConfigurationApp.RemoveFromBlocks; }
     }
 
     public bool Zipped
     {
-      get { return _zipped; }
+      get { return ConfigurationApp.Zipped; }
       set
       {
-        _zipped = value;
-        var cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-        var cZipped = cfg.AppSettings.Settings["Zipped"];
-        cZipped.Value =  _zipped.ToString();
-        cfg.Save();
+        ConfigurationApp.Zipped = value;
         OnPropertyChanged();
       }
     }
@@ -84,14 +75,6 @@ namespace CleanerLogs.ViewModels
       {
         throw new Exception("");
       }
-      string confSavePath = ConfigurationManager.AppSettings["SavePath"];
-      SavePath = string.IsNullOrEmpty(confSavePath) ? Path.GetTempPath() : confSavePath;
-
-      string confRemoveFromBlocks = ConfigurationManager.AppSettings["RemoveFromBlocks"];
-      RemoveFromBlocks = bool.TryParse(confRemoveFromBlocks, out _removeFromBlocks) ? _removeFromBlocks : true;
-
-      string confZipped = ConfigurationManager.AppSettings["Zipped"];
-      Zipped = bool.TryParse(confZipped, out _zipped) ? _zipped : true;
 
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
       foreach (MachineElement item in m.MachineItems)
