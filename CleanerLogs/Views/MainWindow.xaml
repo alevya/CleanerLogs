@@ -19,7 +19,6 @@
 			<views:MachineDetailView/>
 		</DataTemplate>-->
 		<local:CursorConverter x:Key="CursorConverter"/>
-		<local:WidthConverter x:Key="WidthConverter"></local:WidthConverter>
 	</Window.Resources>
 
 	<DockPanel Name="MainDockPanel" Cursor="{Binding Cursor, Converter={StaticResource CursorConverter}}">

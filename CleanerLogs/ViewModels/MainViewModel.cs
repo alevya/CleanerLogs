@@ -127,28 +127,36 @@ namespace CleanerLogs.ViewModels
       }
       while (mapTasks.Count > 0)
       {
+        string ipValue = String.Empty;
         try
         {
           Task resultTask = await Task.WhenAny(mapTasks.Keys);
-          mapTasks.TryGetValue(resultTask, out string ipValue);
+          mapTasks.TryGetValue(resultTask, out ipValue);
           mapTasks.Remove(resultTask);
 
           result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
 
-          //Progress
-          var md = listMd.SingleOrDefault(item => item.Ip == ipValue);
+          //
+          await resultTask;
          
           Progress.Report(new TaskProgress{CurrentProgress = nextIndex
                                           ,TotalProgress = listMd.Count
                                           ,CurrentProgressMessage = string.Format("On {0} ", ipValue)
                                           ,CurrentValue = ipValue
           });
-          //
-          await resultTask;
         }
         catch (Exception exc)
         {
-          // ignored
+          Progress.Report(new TaskProgress
+          {
+            CurrentProgress = nextIndex
+            ,
+            TotalProgress = listMd.Count
+            ,
+            CurrentProgressMessage = exc.Message
+            ,
+            CurrentValue = ipValue
+          });
         }
 
         if(nextIndex >= listMd.Count) continue;
@@ -156,7 +164,6 @@ namespace CleanerLogs.ViewModels
         string ip = listMd.ElementAt(nextIndex).Ip;
         mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
-
       }
 
       Cursor = false;

@@ -77,6 +77,28 @@ namespace CleanerLogs
         _cfg.Save();
       }
     }
+
+    public static int? RequestTimeout
+    {
+      get
+      {
+        var cRequestTimeout = _cfg.AppSettings.Settings["RequestTimeout"];
+        if (cRequestTimeout == null) return null;
+        int.TryParse(cRequestTimeout.Value, out int requestTimeout);
+        return requestTimeout;
+      }
+    }
+
+    public static int? ReadWriteTimeout
+    {
+      get
+      {
+        var cReadWriteTimeout = _cfg.AppSettings.Settings["ReadWriteTimeout"];
+        if (cReadWriteTimeout == null) return null;
+        int.TryParse(cReadWriteTimeout.Value, out int readWriteTimeout);
+        return readWriteTimeout;
+      }
+    }
   }
 
   public class MachinesConfigSection : ConfigurationSection

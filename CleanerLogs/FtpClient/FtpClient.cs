@@ -149,6 +149,9 @@ namespace CleanerLogs.FtpClient
       var uri = GetServerUri(path);
 
       var request = (FtpWebRequest)WebRequest.Create(uri);
+      request.Timeout = ConfigurationApp.RequestTimeout != null ? ConfigurationApp.RequestTimeout.Value : request.Timeout ;
+      request.ReadWriteTimeout = ConfigurationApp.ReadWriteTimeout != null ? ConfigurationApp.ReadWriteTimeout.Value
+                                                                           : request.ReadWriteTimeout;
       request.Method = method;
       request.Credentials = new NetworkCredential("anonymous", "anonymous");
 
