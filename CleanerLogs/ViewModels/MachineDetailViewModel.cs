@@ -3,6 +3,8 @@
   internal class MachineDetailViewModel : BaseViewModel
   {
     private bool _isSelected;
+    private string _message;
+
     public MachineDetailViewModel(string number, string ip)
     {
       Number = number;
@@ -13,6 +15,16 @@
 
     public string Number { get; }
     public string Ip { get; }
+
+    public string Message
+    {
+      get { return _message; }
+      set
+      {
+        _message = value;
+        OnPropertyChanged();
+      }
+    }
 
     public bool IsSelected
     {

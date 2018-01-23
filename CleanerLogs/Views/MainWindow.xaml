@@ -19,6 +19,7 @@
 			<views:MachineDetailView/>
 		</DataTemplate>-->
 		<local:CursorConverter x:Key="CursorConverter"/>
+		<local:WidthConverter x:Key="WidthConverter"></local:WidthConverter>
 	</Window.Resources>
 
 	<DockPanel Name="MainDockPanel" Cursor="{Binding Cursor, Converter={StaticResource CursorConverter}}">
@@ -52,6 +53,7 @@
 			        Command="{Binding CleanCommand}"
 			        HorizontalAlignment="Center"
 			        VerticalAlignment="Center"/>
+			<TextBlock Text="{Binding Msg}"></TextBlock>
 		</StackPanel>
 
 		<Grid>
@@ -61,18 +63,11 @@
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
-			<!--<HeaderedContentControl Grid.Row="0">
-				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>-->
-
 			<DockPanel Grid.Row="0">
 				<CheckBox x:Name="chAll" Content="Выбрать все" 
 				          Command="{Binding SelectAllCommand}"
-				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}"
-											
-				>
-
+				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
 				</CheckBox>
-
 			</DockPanel>
 
 			<DockPanel Grid.Row="1">
@@ -102,12 +97,13 @@
 
 								<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
 								<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
+								<GridViewColumn Width="350" DisplayMemberBinding="{Binding Message}"></GridViewColumn>
 							</GridView.Columns>
 						</GridView>
 					</ListView.View>
 				</ListView>
 			</DockPanel>
-			<!--</HeaderedContentControl>-->
+			
 			<StackPanel Grid.Row="2"
 			            Orientation="Horizontal">
 				<TextBlock Text="Путь сохранения"

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Configuration;
 using System.IO.Packaging;
@@ -9,6 +11,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using CleanerLogs.Commands;
 
 namespace CleanerLogs.ViewModels
@@ -72,7 +75,8 @@ namespace CleanerLogs.ViewModels
     public IProgress<TaskProgress> Progress { get; set; }
 
     public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
-  
+    
+
     #endregion
 
     #region Command
@@ -101,7 +105,8 @@ namespace CleanerLogs.ViewModels
 
     private void ReportProgress(TaskProgress progress)
     {
-
+      var md = MachinesDetails.SingleOrDefault(item => item.IsSelected && item.Ip == progress.CurrentValue);
+      md.Message = progress.CurrentProgressMessage;
     }
 
     private async void CleanAsync(object obj)
@@ -131,9 +136,13 @@ namespace CleanerLogs.ViewModels
           result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
 
           //Progress
+          var md = listMd.SingleOrDefault(item => item.Ip == ipValue);
+         
           Progress.Report(new TaskProgress{CurrentProgress = nextIndex
                                           ,TotalProgress = listMd.Count
-                                          ,CurrentProgressMessage = string.Format("On {0} Message", ipValue)});
+                                          ,CurrentProgressMessage = string.Format("On {0} ", ipValue)
+                                          ,CurrentValue = ipValue
+          });
           //
           await resultTask;
         }
@@ -245,5 +254,7 @@ namespace CleanerLogs.ViewModels
     public int CurrentProgress { get; set; }
     public int TotalProgress { get; set; }
     public string CurrentProgressMessage { get; set; }
+    public string CurrentValue { get; set; }
   }
+
 }
