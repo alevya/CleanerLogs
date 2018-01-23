@@ -18,9 +18,10 @@
 		<!--<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">
 			<views:MachineDetailView/>
 		</DataTemplate>-->
+		<local:CursorConverter x:Key="CursorConverter"/>
 	</Window.Resources>
 
-	<DockPanel Name="MainDockPanel">
+	<DockPanel Name="MainDockPanel" Cursor="{Binding Cursor, Converter={StaticResource CursorConverter}}">
 		<Menu DockPanel.Dock="Top"
 		      VerticalAlignment="Top" VerticalContentAlignment="Center"
 				  HorizontalContentAlignment="Left"
@@ -51,7 +52,6 @@
 			        Command="{Binding CleanCommand}"
 			        HorizontalAlignment="Center"
 			        VerticalAlignment="Center"/>
-
 		</StackPanel>
 
 		<Grid>

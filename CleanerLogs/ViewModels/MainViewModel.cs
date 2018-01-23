@@ -20,6 +20,8 @@ namespace CleanerLogs.ViewModels
     private const string USBDISK = "USBDisk";
     private const string NANDFLASH = "NandFlash";
 
+    private bool _cursor;
+
     public MainViewModel()
     {
       CleanCommand = new DelegateCommand(CleanAsync);
@@ -57,6 +59,18 @@ namespace CleanerLogs.ViewModels
       }
     }
 
+    public bool Cursor
+    {
+      get { return _cursor; }
+      set
+      {
+        _cursor = value;
+        OnPropertyChanged();
+      }
+    }
+
+    public IProgress<TaskProgress> Progress { get; set; }
+
     public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
   
     #endregion
@@ -81,10 +95,18 @@ namespace CleanerLogs.ViewModels
       {
         MachinesDetails.Add(new MachineDetailViewModel(item.MachineNumber, item.MachineIp));
       }
+
+      Progress = new Progress<TaskProgress>(ReportProgress);
+    }
+
+    private void ReportProgress(TaskProgress progress)
+    {
+
     }
 
     private async void CleanAsync(object obj)
     {
+      Cursor = true;
       var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
 
       const int CONCURRENCY_LEVEL = 3;
@@ -107,6 +129,12 @@ namespace CleanerLogs.ViewModels
           mapTasks.Remove(resultTask);
 
           result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
+
+          //Progress
+          Progress.Report(new TaskProgress{CurrentProgress = nextIndex
+                                          ,TotalProgress = listMd.Count
+                                          ,CurrentProgressMessage = string.Format("On {0} Message", ipValue)});
+          //
           await resultTask;
         }
         catch (Exception exc)
@@ -122,7 +150,7 @@ namespace CleanerLogs.ViewModels
 
       }
 
-      MessageBox.Show("Success");
+      Cursor = false;
     }
 
     private async Task DownloadAndDeleteAsync(string ip)
@@ -210,5 +238,12 @@ namespace CleanerLogs.ViewModels
       }
     }
     #endregion
+  }
+
+  public class TaskProgress
+  {
+    public int CurrentProgress { get; set; }
+    public int TotalProgress { get; set; }
+    public string CurrentProgressMessage { get; set; }
   }
 }
