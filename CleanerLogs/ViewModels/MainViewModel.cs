@@ -116,7 +116,7 @@ namespace CleanerLogs.ViewModels
 
       const int CONCURRENCY_LEVEL = 3;
       var mapTasks = new Dictionary<Task, string>(); 
-      var result = new Dictionary<string, bool>(); 
+      //var result = new Dictionary<string, bool>(); 
       int nextIndex = 0;
 
       while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
@@ -134,7 +134,7 @@ namespace CleanerLogs.ViewModels
           mapTasks.TryGetValue(resultTask, out ipValue);
           mapTasks.Remove(resultTask);
 
-          result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
+          //result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
 
           //
           await resultTask;
