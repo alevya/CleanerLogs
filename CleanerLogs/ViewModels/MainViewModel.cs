@@ -40,8 +40,8 @@ namespace CleanerLogs.ViewModels
         {
             get
             {
-            var cSavePath = _configurationApp.SavePath;
-            return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
+                var cSavePath = _configurationApp.SavePath;
+                return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
             }
             set
             {
@@ -119,6 +119,7 @@ namespace CleanerLogs.ViewModels
 
         private async void CleanAsync(object obj)
         {
+            MachinesDetailClear();
             ActionProgress();
 
             var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
@@ -143,11 +144,11 @@ namespace CleanerLogs.ViewModels
                     mapTasks.Remove(resultTask);
                     await resultTask;
 
-                    _updateMachineDetailItem(numberValue, "Успешно!", true);
+                    UpdateMachineDetailItem(numberValue, "Успешно!", true);
                 }
                 catch (Exception exc)
                 {
-                    _updateMachineDetailItem(numberValue, exc.Message, false);
+                    UpdateMachineDetailItem(numberValue, exc.Message, false);
                 }
 
                 if(nextIndex >= listMd.Count) continue;
@@ -246,13 +247,21 @@ namespace CleanerLogs.ViewModels
             }
         }
 
-        private void _updateMachineDetailItem(string number, string message, bool success)
+        private void UpdateMachineDetailItem(string number, string message, bool success)
         {
             _dictMachineDetails.TryGetValue(number, out MachineDetailViewModel md);
             if (md != null)
             {
                 md.Message = message;
                 if (!success) md.IsSelected = false;
+            }
+        }
+
+        private void MachinesDetailClear()
+        {
+            foreach (var item in _dictMachineDetails.Values)
+            {
+                item.Message = string.Empty;
             }
         }
 
