@@ -19,12 +19,12 @@ namespace CleanerLogs.ViewModels
   internal class MainViewModel : BaseViewModel
   {
 
-    private ConfigurationApp _configurationApp;
+    private readonly ConfigurationApp _configurationApp;
     private const string FILE_EXTENSIONS = ".log";
     private const string FOREMAN = "Foreman7";
     private const string USBDISK = "USBDisk";
     private const string NANDFLASH = "NandFlash";
-    private Func<string> _openFileFunc;
+    private readonly Func<string> _openFileFunc;
 
     private bool _cursor;
 
@@ -129,7 +129,6 @@ namespace CleanerLogs.ViewModels
 
         const int CONCURRENCY_LEVEL = 3;
         var mapTasks = new Dictionary<Task, string>(); 
-        //var result = new Dictionary<string, bool>(); 
         int nextIndex = 0;
 
         while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
@@ -150,8 +149,7 @@ namespace CleanerLogs.ViewModels
          
             Progress.Report(new TaskProgress{CurrentProgress = nextIndex
                                             ,TotalProgress = listMd.Count
-                                            ,CurrentProgressMessage = string.Format("On {0} ", ipValue)
-                                            ,CurrentValue = ipValue
+                                            ,CurrentProgressMessage = $"On {ipValue} ",CurrentValue = ipValue
             });
         }
         catch (Exception exc)

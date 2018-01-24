@@ -22,7 +22,7 @@
 	</Window.Resources>
 
 	<DockPanel Name="MainDockPanel" Cursor="{Binding Cursor, Converter={StaticResource CursorConverter}}">
-		<Menu DockPanel.Dock="Top"
+		<!--<Menu DockPanel.Dock="Top"
 		      VerticalAlignment="Top" VerticalContentAlignment="Center"
 				  HorizontalContentAlignment="Left"
 					Padding="1,1">
@@ -39,7 +39,11 @@
                 <MenuItem Header="Файл" 
 				          Command ="{Binding FileOpenCommand}"/>
             </MenuItem>
-        </Menu>
+        </Menu>-->
+
+        <DockPanel>
+
+        </DockPanel>
 
 		<StackPanel DockPanel.Dock="Bottom"
 		            Orientation="Horizontal" HorizontalAlignment="Left">
@@ -53,19 +57,25 @@
 
 		<Grid>
 			<Grid.RowDefinitions>
+			    <RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="*"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
-			<DockPanel Grid.Row="0">
+            <TextBlock Width="Auto" Text="Блоки мониторинга" FontWeight="DemiBold"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center">
+            </TextBlock>
+			<DockPanel Grid.Row="1">
 				<CheckBox x:Name="chAll" Content="Выбрать все" 
 				          Command="{Binding SelectAllCommand}"
 				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
 				</CheckBox>
 			</DockPanel>
 
-			<DockPanel Grid.Row="1">
+			<DockPanel Grid.Row="2">
 				<ListView ItemsSource="{Binding Path= MachinesDetails}">
 					<ListView.View>
 						<GridView>
@@ -99,7 +109,7 @@
 				</ListView>
 			</DockPanel>
 			
-			<StackPanel Grid.Row="2"
+			<StackPanel Grid.Row="3"
 			            Orientation="Horizontal">
 				<TextBlock Text="Путь сохранения"
 				           Margin="2,2,2,2"

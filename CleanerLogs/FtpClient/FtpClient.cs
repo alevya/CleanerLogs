@@ -12,7 +12,7 @@ namespace CleanerLogs.FtpClient
     private readonly int? _readWriteTimeout;
     public string Server { get;}
 
-    public FtpClient(string server, int? requestTimeout, int? readWriteTimeout)
+    public FtpClient(string server, int? requestTimeout = null, int? readWriteTimeout = null)
     {
         Server = server;
         _requestTimeout =  requestTimeout;
