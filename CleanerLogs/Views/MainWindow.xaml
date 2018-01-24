@@ -12,7 +12,7 @@
 		WindowStartupLocation="CenterScreen"
         Title="Foreman - Сохранение и очистка лог-файлов"
 				Icon ="/CleanerLogs;component/Resources/MainIcon.ico"
-        Height="350" Width="525
+        Height="518.196" Width="525
 				">
 	<Window.Resources>
 		<!--<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">

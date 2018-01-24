@@ -170,37 +170,37 @@ namespace CleanerLogs.ViewModels
             var logsUsbDisk = listUsbDisk.Where(file => file.EndsWith(FILE_EXTENSIONS));
             var logsNandDisk = listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS));
 
-            var rootPathTrg = Path.Combine(SavePath, ip);
+            var rootPathTrg = Path.Combine(SavePath, ip, DateTime.Today.ToShortDateString());
 
             if (Zipped)
             {
-            using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
-            {
-                foreach (var fileSrc in logsUsbDisk)
+                using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
                 {
-                await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
+                    foreach (var fileSrc in logsUsbDisk)
+                    {
+                    await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
+                    }
+                    foreach (var fileSrc in logsNandDisk)
+                    {
+                    await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
+                    }
                 }
-                foreach (var fileSrc in logsNandDisk)
-                {
-                await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
-                }
-            }
             }
             else
             {
-            var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
-            var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
+                var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
+                var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
 
-            foreach (var fileSrc in logsUsbDisk)
-            {
-                var pathTrg = Path.Combine(diUsbDisk.FullName, fileSrc);
-                await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
-            }
-            foreach (var fileSrc in logsNandDisk)
-            {
-                var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
-                await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
-            }
+                foreach (var fileSrc in logsUsbDisk)
+                {
+                    var pathTrg = Path.Combine(diUsbDisk.FullName, fileSrc);
+                    await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
+                }
+                foreach (var fileSrc in logsNandDisk)
+                {
+                    var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
+                    await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
+                }
             }
         }
 
@@ -212,7 +212,7 @@ namespace CleanerLogs.ViewModels
 
             if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
             {
-            await ftpLoader.DeleteFileAsync(pathSrc);
+                await ftpLoader.DeleteFileAsync(pathSrc);
             }
         }
 
@@ -226,7 +226,7 @@ namespace CleanerLogs.ViewModels
      
             if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
             {
-            await ftpLoader.DeleteFileAsync(pathSrc);
+                await ftpLoader.DeleteFileAsync(pathSrc);
             }
         }
 
@@ -242,7 +242,7 @@ namespace CleanerLogs.ViewModels
             var isChecked = (bool) obj;
             foreach (var item in MachinesDetails)
             {
-            item.IsSelected = isChecked;
+                item.IsSelected = isChecked;
             }
         }
 
