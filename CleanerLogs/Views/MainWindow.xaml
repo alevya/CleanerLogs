@@ -107,7 +107,8 @@
 						</GridView>
 					</ListView.View>
 				</ListView>-->
-                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" >
+                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
+                           >
                     <DataGrid.Columns>
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.Header>

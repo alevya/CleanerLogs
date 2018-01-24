@@ -24,6 +24,7 @@ namespace CleanerLogs.ViewModels
 
         private bool _cursorWait;
         private bool _enabledGui = true;
+        private ObservableCollection<MachineDetailViewModel> _machinesDetails;
 
         public MainViewModel(Func<string> openFileFunc)
         {
@@ -110,7 +111,15 @@ namespace CleanerLogs.ViewModels
             }
         }
 
-        public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
+        public ObservableCollection<MachineDetailViewModel> MachinesDetails
+        {
+            get { return _machinesDetails; }
+            set
+            {
+                _machinesDetails = value;
+                OnPropertyChanged();
+            }
+        }
    #endregion
 
    #region Command
