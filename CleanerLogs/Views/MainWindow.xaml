@@ -76,12 +76,12 @@
 			</DockPanel>
 
 			<DockPanel Grid.Row="2">
-				<ListView ItemsSource="{Binding Path= MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+				<!--<ListView ItemsSource="{Binding Path= MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
 					<ListView.View>
 						<GridView>
 							<GridView.Columns>
 								<GridViewColumn>
-									<!--<GridViewColumn.HeaderTemplate>
+									--><!--<GridViewColumn.HeaderTemplate>
 										<DataTemplate>
 											<CheckBox x:Name="chAll"  
 											          Command="{Binding SelectAllCommand}"
@@ -90,7 +90,7 @@
 
 										</DataTemplate>
 
-									</GridViewColumn.HeaderTemplate>-->
+									</GridViewColumn.HeaderTemplate>--><!--
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 
@@ -106,8 +106,24 @@
 							</GridView.Columns>
 						</GridView>
 					</ListView.View>
-				</ListView>
-			</DockPanel>
+				</ListView>-->
+                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay}" AutoGenerateColumns="False" >
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        
+                        <DataGridTextColumn Header="Номер блока" Binding="{Binding Path=Number}" />
+                        <DataGridTextColumn Header="Ip-адрес" Binding="{Binding Path=Ip}" />
+			            <DataGridTextColumn Width="350" Binding="{Binding Path=Message}" />
+			        </DataGrid.Columns>
+			    </DataGrid>
+
+            </DockPanel>
 			
 			<StackPanel Grid.Row="3"
 			            Orientation="Horizontal">
