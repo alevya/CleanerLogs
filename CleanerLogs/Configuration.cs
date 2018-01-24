@@ -5,16 +5,15 @@ using System.Runtime.CompilerServices;
 
 namespace CleanerLogs
 {
-  public  class ConfigurationApp
+  public class ConfigurationApp
   {
-      private readonly Configuration _cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+      private  Configuration _cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
       private string _savePath;
       private bool _removeFromBlocks;
       private bool _zipped;
 
       public ConfigurationApp()
       {
-          
       }
 
       public MachinesCollection MachineItems
@@ -113,6 +112,15 @@ namespace CleanerLogs
             int.TryParse(cReadWriteTimeout.Value, out int readWriteTimeout);
             return readWriteTimeout;
         }
+      }
+
+      public void Load(string path)
+      {
+          var confMap = new ExeConfigurationFileMap();
+          confMap.ExeConfigFilename = path;
+          _cfg = ConfigurationManager.OpenMappedExeConfiguration(confMap, ConfigurationUserLevel.None);
+
+
       }
     }
 

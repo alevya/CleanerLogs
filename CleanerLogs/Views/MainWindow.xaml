@@ -76,7 +76,7 @@
 			</DockPanel>
 
 			<DockPanel Grid.Row="2">
-				<ListView ItemsSource="{Binding Path= MachinesDetails}">
+				<ListView ItemsSource="{Binding Path= MachinesDetails, Mode=TwoWay}">
 					<ListView.View>
 						<GridView>
 							<GridView.Columns>

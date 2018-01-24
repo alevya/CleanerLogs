@@ -99,23 +99,34 @@ namespace CleanerLogs.ViewModels
         public void InitConfig()
         {
 
-            var m = _configurationApp.MachineItems;
-            if (m == null || m.Count == 0)
+            var machineItems = _configurationApp.MachineItems;
+            if (machineItems == null || machineItems.Count == 0)
             {
                 return;
             }
-
-            foreach (MachineElement item in m)
+            _dictMachineDetails.Clear();
+            foreach (MachineElement item in machineItems)
             {
-                _dictMachineDetails.Add(item.MachineNumber, new MachineDetailViewModel(item.MachineNumber, item.MachineIp));
+                var md = new MachineDetailViewModel(item.MachineNumber, item.MachineIp);
+                if (!_dictMachineDetails.ContainsKey(item.MachineNumber))
+                {
+                    _dictMachineDetails.Add(item.MachineNumber, md);
+                }
+                else
+                {
+                    _dictMachineDetails[item.MachineNumber] = md;
+                }
             }
-
+            
             MachinesDetails = new ObservableCollection<MachineDetailViewModel>(_dictMachineDetails.Values);
         }
 
         private void FileOpen(object obj)
         {
             var res = _openFileFunc?.Invoke();
+            _configurationApp.Load(res);
+            InitConfig();
+
         }
 
         private async void CleanAsync(object obj)
