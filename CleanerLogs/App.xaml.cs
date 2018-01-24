@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using CleanerLogs.ViewModels;
 
 namespace CleanerLogs
@@ -11,7 +12,7 @@ namespace CleanerLogs
     protected override void OnStartup(StartupEventArgs args)
     {
       base.OnStartup(args);
-      var dataContext = new MainViewModel();
+      var dataContext = new MainViewModel(Views.MainWindow.OpenFileFunc);
       dataContext.InitConfig();
       MainWindow = new Views.MainWindow
       {

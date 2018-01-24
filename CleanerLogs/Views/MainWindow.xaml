@@ -35,15 +35,11 @@
 				</ItemsPanelTemplate>
 			</Menu.ItemsPanel>
 
-			<MenuItem Header="Настройки">
-				<MenuItem Header="Файл"/>
-			</MenuItem>
-
-			<MenuItem Header="Справка">
-				<MenuItem Header="О программе..."
-									Command="{Binding ShowAboutCommand}"/>
-			</MenuItem> >
-		</Menu>
+            <MenuItem Header="Настройки">
+                <MenuItem Header="Файл" 
+				          Command ="{Binding FileOpenCommand}"/>
+            </MenuItem>
+        </Menu>
 
 		<StackPanel DockPanel.Dock="Bottom"
 		            Orientation="Horizontal" HorizontalAlignment="Left">

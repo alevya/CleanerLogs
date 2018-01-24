@@ -22,11 +22,14 @@ namespace CleanerLogs.ViewModels
     private const string FOREMAN = "Foreman7";
     private const string USBDISK = "USBDisk";
     private const string NANDFLASH = "NandFlash";
+    private Func<string> _openFileFunc;
 
     private bool _cursor;
 
-    public MainViewModel()
+    public MainViewModel(Func<string> openFileFunc)
     {
+      _openFileFunc = openFileFunc;
+      FileOpenCommand = new DelegateCommand(FileOpen);
       CleanCommand = new DelegateCommand(CleanAsync);
       SelectAllCommand = new DelegateCommand(SelectAll);
     }
@@ -80,6 +83,7 @@ namespace CleanerLogs.ViewModels
     #endregion
 
     #region Command
+    public ICommand FileOpenCommand { get; }
     public ICommand CleanCommand { get; }
     public ICommand SelectAllCommand { get; }
     #endregion
@@ -91,7 +95,7 @@ namespace CleanerLogs.ViewModels
       var m = ConfigurationManager.GetSection("StartupMachines") as MachinesConfigSection;
       if (m == null || m.MachineItems.Count == 0)
       {
-        throw new Exception("");
+        return;
       }
 
       MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
@@ -109,46 +113,48 @@ namespace CleanerLogs.ViewModels
       md.Message = progress.CurrentProgressMessage;
     }
 
+    private void FileOpen(object obj)
+    {
+        var res = _openFileFunc?.Invoke();
+
+    }
+
     private async void CleanAsync(object obj)
     {
-      Cursor = true;
-      var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
+        Cursor = true;
+        var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
 
-      const int CONCURRENCY_LEVEL = 3;
-      var mapTasks = new Dictionary<Task, string>(); 
-      //var result = new Dictionary<string, bool>(); 
-      int nextIndex = 0;
+        const int CONCURRENCY_LEVEL = 3;
+        var mapTasks = new Dictionary<Task, string>(); 
+        //var result = new Dictionary<string, bool>(); 
+        int nextIndex = 0;
 
-      while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
-      {
+        while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
+        {
         string ip = listMd.ElementAt(nextIndex).Ip;
         mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
-      }
-      while (mapTasks.Count > 0)
-      {
+        }
+        while (mapTasks.Count > 0)
+        {
         string ipValue = String.Empty;
         try
         {
-          Task resultTask = await Task.WhenAny(mapTasks.Keys);
-          mapTasks.TryGetValue(resultTask, out ipValue);
-          mapTasks.Remove(resultTask);
-
-          //result.Add(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
-
-          //
-          await resultTask;
+            Task resultTask = await Task.WhenAny(mapTasks.Keys);
+            mapTasks.TryGetValue(resultTask, out ipValue);
+            mapTasks.Remove(resultTask);
+            await resultTask;
          
-          Progress.Report(new TaskProgress{CurrentProgress = nextIndex
-                                          ,TotalProgress = listMd.Count
-                                          ,CurrentProgressMessage = string.Format("On {0} ", ipValue)
-                                          ,CurrentValue = ipValue
-          });
+            Progress.Report(new TaskProgress{CurrentProgress = nextIndex
+                                            ,TotalProgress = listMd.Count
+                                            ,CurrentProgressMessage = string.Format("On {0} ", ipValue)
+                                            ,CurrentValue = ipValue
+            });
         }
         catch (Exception exc)
         {
-          Progress.Report(new TaskProgress
-          {
+            Progress.Report(new TaskProgress
+            {
             CurrentProgress = nextIndex
             ,
             TotalProgress = listMd.Count
@@ -156,7 +162,7 @@ namespace CleanerLogs.ViewModels
             CurrentProgressMessage = exc.Message
             ,
             CurrentValue = ipValue
-          });
+            });
         }
 
         if(nextIndex >= listMd.Count) continue;
@@ -164,9 +170,9 @@ namespace CleanerLogs.ViewModels
         string ip = listMd.ElementAt(nextIndex).Ip;
         mapTasks.Add(DownloadAndDeleteAsync(ip), ip);
         nextIndex++;
-      }
+        }
 
-      Cursor = false;
+        Cursor = false;
     }
 
     private async Task DownloadAndDeleteAsync(string ip)
@@ -247,6 +253,8 @@ namespace CleanerLogs.ViewModels
 
     private void SelectAll(object obj)
     {
+      if(MachinesDetails == null) return;
+
       var isChecked = (bool) obj;
       foreach (var item in MachinesDetails)
       {
