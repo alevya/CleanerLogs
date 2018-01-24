@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Runtime.CompilerServices;
 
@@ -13,17 +14,27 @@ namespace CleanerLogs
 
       public ConfigurationApp()
       {
+          
+      }
+
+      public MachinesCollection MachineItems
+      {
+          get
+          {
+              var machines = _cfg.GetSection("StartupMachines") as MachinesConfigSection;
+              return machines != null ? machines.MachineItems : null;
+          }
       }
 
       public  string SavePath
       {
-            get
-            {
+        get
+        {
             var cSavePath = _cfg.AppSettings.Settings["SavePath"];
             return cSavePath != null ? cSavePath.Value : _savePath;
-            }
-            set
-            {
+        }
+        set
+        {
             var cSavePath = _cfg.AppSettings.Settings["SavePath"];
             if (cSavePath == null)
             {
@@ -33,21 +44,21 @@ namespace CleanerLogs
 
             cSavePath.Value = value;
             _cfg.Save();
-            }
+        }
       }
 
       public  bool RemoveFromBlocks
       {
 
-            get
-            {
+        get
+        {
             var cRemoveFromBlocks = _cfg.AppSettings.Settings["RemoveFromBlocks"];
             if (cRemoveFromBlocks == null) return _removeFromBlocks;
             bool.TryParse(cRemoveFromBlocks.Value, out _removeFromBlocks);
             return _removeFromBlocks;
-            }
-            set
-            {
+        }
+        set
+        {
             var cRemoveFromBlocks = _cfg.AppSettings.Settings["RemoveFromBlocks"];
             if (cRemoveFromBlocks == null)
             {
@@ -56,20 +67,20 @@ namespace CleanerLogs
             }
             cRemoveFromBlocks.Value = Convert.ToString(value);
             _cfg.Save();
-            }
+        }
       }
 
       public bool Zipped
       {
-            get
-            {
+        get
+        {
             var cZipped = _cfg.AppSettings.Settings["Zipped"];
             if (cZipped == null) return _zipped;
             bool.TryParse(cZipped.Value, out _zipped);
             return _zipped;
-            }
-            set
-            {
+        }
+        set
+        {
             var cZipped = _cfg.AppSettings.Settings["Zipped"];
             if (cZipped == null)
             {
@@ -79,75 +90,74 @@ namespace CleanerLogs
 
             cZipped.Value = Convert.ToString(value);
             _cfg.Save();
-            }
+        }
       }
 
       public  int? RequestTimeout
       {
-            get
-            {
+        get
+        {
             var cRequestTimeout = _cfg.AppSettings.Settings["RequestTimeout"];
             if (cRequestTimeout == null) return null;
             int.TryParse(cRequestTimeout.Value, out int requestTimeout);
             return requestTimeout;
-            }
+        }
       }
 
       public int? ReadWriteTimeout
       {
-            get
-            {
+        get
+        {
             var cReadWriteTimeout = _cfg.AppSettings.Settings["ReadWriteTimeout"];
             if (cReadWriteTimeout == null) return null;
             int.TryParse(cReadWriteTimeout.Value, out int readWriteTimeout);
             return readWriteTimeout;
-            }
+        }
       }
     }
 
     public class MachinesConfigSection : ConfigurationSection
     {
-
-    [ConfigurationProperty("Machines")]
-    public MachinesCollection MachineItems
-    {
-        get { return (MachinesCollection) base["Machines"]; }
-    }
+        [ConfigurationProperty("Machines")]
+        public MachinesCollection MachineItems
+        {
+            get { return (MachinesCollection) base["Machines"]; }
+        }
     }
 
     public class MachineElement : ConfigurationElement
     {
-    [ConfigurationProperty("number", DefaultValue = "", IsKey = true, IsRequired = true)]
-    public string MachineNumber
-    {
-        get { return (string)base["number"]; }
-        set { base["number"] = value; }
-    }
+        [ConfigurationProperty("number", DefaultValue = "", IsKey = true, IsRequired = true)]
+        public string MachineNumber
+        {
+            get { return (string)base["number"]; }
+            set { base["number"] = value; }
+        }
 
-    [ConfigurationProperty("ip", DefaultValue = "", IsKey = false, IsRequired = false)]
-    public string MachineIp
-    {
-        get { return (string)base["ip"]; }
-        set { base["ip"] = value; }
-    }
+        [ConfigurationProperty("ip", DefaultValue = "", IsKey = false, IsRequired = false)]
+        public string MachineIp
+        {
+            get { return (string)base["ip"]; }
+            set { base["ip"] = value; }
+        }
     }
 
     [ConfigurationCollection(typeof(MachineElement), AddItemName = "Machine")]
     public class MachinesCollection : ConfigurationElementCollection
     {
-    protected override ConfigurationElement CreateNewElement()
-    {
-        return new MachineElement();
-    }
+        protected override ConfigurationElement CreateNewElement()
+        {
+            return new MachineElement();
+        }
 
-    protected override object GetElementKey(ConfigurationElement element)
-    {
-        return ((MachineElement) element).MachineNumber;
-    }
+        protected override object GetElementKey(ConfigurationElement element)
+        {
+            return ((MachineElement) element).MachineNumber;
+        }
 
-    public MachineElement this[int index]
-    {
-        get { return (MachineElement) BaseGet(index); }
-    }
+        public MachineElement this[int index]
+        {
+            get { return (MachineElement) BaseGet(index); }
+        }
     }
 }

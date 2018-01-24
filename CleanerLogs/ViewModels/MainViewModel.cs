@@ -98,13 +98,14 @@ namespace CleanerLogs.ViewModels
 
         public void InitConfig()
         {
-            var m = ConfigurationManager.GetSection("StartupMachines") as MachinesConfigSection;
-            if (m == null || m.MachineItems.Count == 0)
+
+            var m = _configurationApp.MachineItems;
+            if (m == null || m.Count == 0)
             {
-            return;
+                return;
             }
 
-            foreach (MachineElement item in m.MachineItems)
+            foreach (MachineElement item in m)
             {
                 _dictMachineDetails.Add(item.MachineNumber, new MachineDetailViewModel(item.MachineNumber, item.MachineIp));
             }
