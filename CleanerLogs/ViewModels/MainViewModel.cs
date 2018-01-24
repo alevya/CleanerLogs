@@ -143,11 +143,11 @@ namespace CleanerLogs.ViewModels
                     mapTasks.Remove(resultTask);
                     await resultTask;
 
-                    _updateMachineItemMessage(numberValue, "Успешно!");
+                    _updateMachineDetailItem(numberValue, "Успешно!", true);
                 }
                 catch (Exception exc)
                 {
-                    _updateMachineItemMessage(numberValue, exc.Message);
+                    _updateMachineDetailItem(numberValue, exc.Message, false);
                 }
 
                 if(nextIndex >= listMd.Count) continue;
@@ -246,10 +246,14 @@ namespace CleanerLogs.ViewModels
             }
         }
 
-        private void _updateMachineItemMessage(string number, string message)
+        private void _updateMachineDetailItem(string number, string message, bool success)
         {
             _dictMachineDetails.TryGetValue(number, out MachineDetailViewModel md);
-            if (md != null) md.Message = message;
+            if (md != null)
+            {
+                md.Message = message;
+                if (!success) md.IsSelected = false;
+            }
         }
 
         private void ActionProgress()
