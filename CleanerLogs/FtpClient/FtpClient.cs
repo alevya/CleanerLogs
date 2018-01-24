@@ -155,7 +155,7 @@ namespace CleanerLogs.FtpClient
       request.Timeout = _requestTimeout ?? request.Timeout ;
       request.ReadWriteTimeout = _readWriteTimeout ?? request.ReadWriteTimeout;
       request.Method = method;
-      request.Credentials = new NetworkCredential("anonymous", "anonymous");
+      request.Credentials = new NetworkCredential("root", "admin");//new NetworkCredential("anonymous", "anonymous");
 
       return request;
     }

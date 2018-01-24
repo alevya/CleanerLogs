@@ -41,7 +41,13 @@ namespace CleanerLogs.ViewModels
             get
             {
                 var cSavePath = _configurationApp.SavePath;
-                return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
+
+                if (string.IsNullOrEmpty(cSavePath))
+                {
+                    return Path.GetTempPath();
+                }
+                var dirInfo = new DirectoryInfo(cSavePath);
+                return dirInfo.Root.Exists ? cSavePath : Path.GetTempPath();
             }
             set
             {
@@ -143,15 +149,17 @@ namespace CleanerLogs.ViewModels
             while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
             {
                 var md = listMd.ElementAt(nextIndex);
+               
                 mapTasks.Add(DownloadAndDeleteAsync(md.Ip), md.Number);
                 nextIndex++;
+               
             }
             while (mapTasks.Count > 0)
             {
                 string numberValue = String.Empty;
                 try
                 {
-                    Task resultTask = await Task.WhenAny(mapTasks.Keys);
+                    Task resultTask = await Task.WhenAny(mapTasks.Keys).ConfigureAwait(true);
                     mapTasks.TryGetValue(resultTask, out numberValue);
                     mapTasks.Remove(resultTask);
                     await resultTask;
@@ -160,7 +168,7 @@ namespace CleanerLogs.ViewModels
                 }
                 catch (Exception exc)
                 {
-                    UpdateMachineDetailItem(numberValue, exc.Message, false);
+                    UpdateMachineDetailItem(numberValue, exc.Message.TrimEnd(), false);
                 }
 
                 if(nextIndex >= listMd.Count) continue;
@@ -175,6 +183,9 @@ namespace CleanerLogs.ViewModels
 
         private async Task DownloadAndDeleteAsync(string ip)
         {
+            var logFolderName = BuildLogFolderName();
+            var rootPathTrg = Path.Combine(SavePath, ip);
+         
             var ftpLoader = new FtpClient.FtpClient(ip, _configurationApp.RequestTimeout, _configurationApp.ReadWriteTimeout);
     
             var listUsbDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
@@ -183,11 +194,11 @@ namespace CleanerLogs.ViewModels
             var logsUsbDisk = listUsbDisk.Where(file => file.EndsWith(FILE_EXTENSIONS));
             var logsNandDisk = listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS));
 
-            var rootPathTrg = Path.Combine(SavePath, ip, DateTime.Today.ToShortDateString());
-
             if (Zipped)
             {
-                using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
+                Directory.CreateDirectory(rootPathTrg);
+                var pathPackage = Path.Combine(rootPathTrg, logFolderName);
+                using (var package = Package.Open(pathPackage + ".zip", FileMode.Create, FileAccess.ReadWrite))
                 {
                     foreach (var fileSrc in logsUsbDisk)
                     {
@@ -201,8 +212,8 @@ namespace CleanerLogs.ViewModels
             }
             else
             {
-                var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
-                var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
+                var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, logFolderName, USBDISK));
+                var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, logFolderName, NANDFLASH));
 
                 foreach (var fileSrc in logsUsbDisk)
                 {
@@ -246,6 +257,11 @@ namespace CleanerLogs.ViewModels
         private string BuildRemotePath(string nameRootPath)
         {
             return Path.Combine(nameRootPath, FOREMAN);
+        }
+
+        private string BuildLogFolderName(string name = "")
+        {
+            return string.Format("log_{0}", DateTime.Today.ToShortDateString());
         }
 
         private void SelectAll(object obj)
