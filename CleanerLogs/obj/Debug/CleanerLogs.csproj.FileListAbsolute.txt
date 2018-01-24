@@ -35,3 +35,4 @@ E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.pdb
 E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\bin\Debug\App.config
 E:\DEVELOPMENTS\FOREMAN\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csprojResolveAssemblyReference.cache
 D:\Projects\CleanerLogs\CleanerLogs\bin\Debug\App.config
+D:\Projects\CleanerLogs\CleanerLogs\obj\Debug\CleanerLogs.csprojResolveAssemblyReference.cache
