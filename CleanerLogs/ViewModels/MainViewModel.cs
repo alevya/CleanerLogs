@@ -22,7 +22,8 @@ namespace CleanerLogs.ViewModels
         private readonly Func<string> _openFileFunc;
         private readonly IDictionary<string, MachineDetailViewModel> _dictMachineDetails = new Dictionary<string, MachineDetailViewModel>();
 
-        private bool _cursor;
+        private bool _cursorWait;
+        private bool _enabledGui = true;
 
         public MainViewModel(Func<string> openFileFunc)
         {
@@ -45,7 +46,7 @@ namespace CleanerLogs.ViewModels
             set
             {
                 _configurationApp.SavePath = value;
-            OnPropertyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -60,17 +61,27 @@ namespace CleanerLogs.ViewModels
             set
             {
                 _configurationApp.Zipped = value;
-            OnPropertyChanged();
+                OnPropertyChanged();
             }
         }
 
-        public bool Cursor
+        public bool CursorWait
         {
-            get { return _cursor; }
+            get { return _cursorWait; }
             set
             {
-            _cursor = value;
-            OnPropertyChanged();
+                _cursorWait = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool EnabledGui
+        {
+            get { return _enabledGui; }
+            set
+            {
+                _enabledGui = value;
+                OnPropertyChanged();
             }
         }
     
@@ -108,7 +119,8 @@ namespace CleanerLogs.ViewModels
 
         private async void CleanAsync(object obj)
         {
-            Cursor = true;
+            ActionProgress();
+
             var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
 
             const int CONCURRENCY_LEVEL = 10;
@@ -145,7 +157,7 @@ namespace CleanerLogs.ViewModels
                 nextIndex++;
             }
 
-            Cursor = false;
+            ActionCompleted();
         }
 
         private async Task DownloadAndDeleteAsync(string ip)
@@ -238,6 +250,20 @@ namespace CleanerLogs.ViewModels
         {
             _dictMachineDetails.TryGetValue(number, out MachineDetailViewModel md);
             if (md != null) md.Message = message;
+        }
+
+        private void ActionProgress()
+        {
+            EnabledGui = false;
+            CursorWait = true;
+            
+        }
+
+        private void ActionCompleted()
+        {
+            EnabledGui = true;
+            CursorWait = false;
+            
         }
    #endregion
   }

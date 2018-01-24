@@ -8,12 +8,12 @@ namespace CleanerLogs
   {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      return (bool)value ? "Wait" : "Arrow";
+      return (bool)value ? "Wait" : "Default";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-      return (bool)value ? "Arrow" : "Wait";
+      return (bool)value ? "Default" : "Wait";
     }
   }
 }
