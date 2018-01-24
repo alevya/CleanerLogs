@@ -4,24 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CleanerLogs"
-				xmlns:cmd="clr-namespace:CleanerLogs.Commands"
-				xmlns:views="clr-namespace:CleanerLogs.Views"
-				xmlns:viewmodels="clr-namespace:CleanerLogs.ViewModels"
+		xmlns:cmd="clr-namespace:CleanerLogs.Commands"
+		xmlns:views="clr-namespace:CleanerLogs.Views"
+		xmlns:viewmodels="clr-namespace:CleanerLogs.ViewModels"
         mc:Ignorable="d"
-				WindowStyle="SingleBorderWindow"
-				WindowStartupLocation="CenterScreen"
+		WindowStyle="SingleBorderWindow"
+		WindowStartupLocation="CenterScreen"
         Title="Foreman - Сохранение и очистка лог-файлов"
 				Icon ="/CleanerLogs;component/Resources/MainIcon.ico"
-        Height="350" Width="525
+        Height="518.196" Width="525
 				">
 	<Window.Resources>
 		<!--<DataTemplate DataType="{x:Type viewmodels:MachineDetailViewModel}">
 			<views:MachineDetailView/>
 		</DataTemplate>-->
+		<local:CursorConverter x:Key="CursorConverter"/>
 	</Window.Resources>
 
-	<DockPanel Name="MainDockPanel">
-		<Menu DockPanel.Dock="Top"
+	<DockPanel Name="MainDockPanel"  Cursor="{Binding CursorWait, Converter={StaticResource CursorConverter}}">
+        <Menu DockPanel.Dock="Top" IsEnabled="{Binding EnabledGui}"
 		      VerticalAlignment="Top" VerticalContentAlignment="Center"
 				  HorizontalContentAlignment="Left"
 					Padding="1,1">
@@ -34,81 +35,90 @@
 				</ItemsPanelTemplate>
 			</Menu.ItemsPanel>
 
-			<MenuItem Header="Настройки">
-				<MenuItem Header="Файл"/>
-			</MenuItem>
+            <MenuItem Header="Настройки">
+                <MenuItem Header="Файл" 
+				          Command ="{Binding FileOpenCommand}"/>
+            </MenuItem>
+        </Menu>
 
-			<MenuItem Header="Справка">
-				<MenuItem Header="О программе..."
-									Command="{Binding ShowAboutCommand}"/>
-			</MenuItem> >
-		</Menu>
+        <DockPanel>
 
-		<StackPanel DockPanel.Dock="Bottom"
+        </DockPanel>
+
+        <StackPanel DockPanel.Dock="Bottom" IsEnabled="{Binding EnabledGui}"
 		            Orientation="Horizontal" HorizontalAlignment="Left">
-			<Button Content="Очистить"
+			<Button Content="Сохранить"
 			        Margin="3,3,5,3"
 			        Command="{Binding CleanCommand}"
 			        HorizontalAlignment="Center"
 			        VerticalAlignment="Center"/>
-
+			<TextBlock Text="{Binding Msg}"></TextBlock>
 		</StackPanel>
 
-		<Grid>
+        <Grid IsEnabled="{Binding EnabledGui}">
 			<Grid.RowDefinitions>
+			    <RowDefinition Height="Auto"></RowDefinition>
+				<RowDefinition Height="Auto"></RowDefinition>
 				<RowDefinition Height="*"></RowDefinition>
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
+            <TextBlock Width="Auto" Text="Блоки мониторинга" FontWeight="DemiBold"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Center"
+                       TextAlignment="Center">
+            </TextBlock>
+			<DockPanel Grid.Row="1">
+				<CheckBox x:Name="chAll" Content="Выбрать все" 
+				          Command="{Binding SelectAllCommand}"
+				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
+				</CheckBox>
+			</DockPanel>
 
-			<!--<HeaderedContentControl Grid.Row="0">
-				<HeaderedContentControl.Header>Блоки мониторинга</HeaderedContentControl.Header>-->
+			<DockPanel Grid.Row="2">
+				<ListView ItemsSource="{Binding Path= MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+					<ListView.View>
+						<GridView>
+							<GridView.Columns>
+								<GridViewColumn>
+									<!--<GridViewColumn.HeaderTemplate>
+										<DataTemplate>
+											<CheckBox x:Name="chAll"  
+											          Command="{Binding SelectAllCommand}"
+											          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
+											</CheckBox>
 
-				
-			<!--<ScrollViewer CanContentScroll="True">-->
-				
-					<StackPanel >
-						<CheckBox x:Name="chAll" Content="Выбрать все" 
-						          Command="{Binding SelectAllCommand}"
-											CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}"
-											
-						          >
-								
-						</CheckBox>
-						<ListView ItemsSource="{Binding Path= MachinesDetails}">
-							<ListView.View>
-								<GridView>
-									<GridView.Columns>
-										<GridViewColumn>
-											<GridViewColumn.CellTemplate>
-												<DataTemplate>
-													
-														<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
-													
-												</DataTemplate>
-											</GridViewColumn.CellTemplate>
-											
-										</GridViewColumn>
-										<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
-										<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
-								</GridView.Columns>
-								</GridView>
-							</ListView.View>
-						</ListView>
-				</StackPanel>
-			<!--</ScrollViewer>-->
+										</DataTemplate>
 
-			<!--</HeaderedContentControl>-->
+									</GridViewColumn.HeaderTemplate>-->
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
 
-			<StackPanel Grid.Row="1"
+											<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
+
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+
+								<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
+								<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
+								<GridViewColumn Width="350" DisplayMemberBinding="{Binding Message}"></GridViewColumn>
+							</GridView.Columns>
+						</GridView>
+					</ListView.View>
+				</ListView>
+			</DockPanel>
+			
+			<StackPanel Grid.Row="3"
 			            Orientation="Horizontal">
 				<TextBlock Text="Путь сохранения"
 				           Margin="2,2,2,2"
 				           VerticalAlignment="Center"/>
 				<views:FolderEntry Text="{Binding SavePath}"
-				                   Description="Выбор места сохранения лог-файлов"
-				>
+				                   Description="Выбор места сохранения лог-файлов">
 				</views:FolderEntry>
+				<CheckBox Content="Архивировать" Margin="2,2,2,2" IsChecked="{Binding Zipped}"
+				          VerticalAlignment="Center"></CheckBox>
 			</StackPanel>
 		</Grid>
 

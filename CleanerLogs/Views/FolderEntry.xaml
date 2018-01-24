@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:CleanerLogs.Views"
              mc:Ignorable="d" d:DesignWidth="300" Height="Auto">
 	<DockPanel>
-		<Button Margin="0" Padding="0" DockPanel.Dock="Right" Width="Auto" Click="BrowseFolder">...</Button>
+		<Button Margin="0" Padding="0" DockPanel.Dock="Right" Width="Auto" Content=" ... "  Click="BrowseFolder"></Button>
 		<TextBox Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Right" 
 		         Text="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" VerticalAlignment="Top" />
 	</DockPanel>

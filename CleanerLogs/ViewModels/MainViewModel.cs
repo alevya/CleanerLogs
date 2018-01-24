@@ -1,177 +1,296 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Configuration;
+using System.IO.Packaging;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 using CleanerLogs.Commands;
-using CleanerLogs.ViewModel;
 
 namespace CleanerLogs.ViewModels
 {
-  internal class MainViewModel : BaseViewModel
-  {
-    private string _savePath;
-
-    public MainViewModel()
+    internal class MainViewModel : BaseViewModel
     {
-      CleanCommand = new DelegateCommand(CleanAsync);
-      SelectAllCommand = new DelegateCommand(SelectAll);
-    }
+        private readonly ConfigurationApp _configurationApp;
+        private const string FILE_EXTENSIONS = ".log";
+        private const string FOREMAN = "Foreman7";
+        private const string USBDISK = "USBDisk";
+        private const string NANDFLASH = "NandFlash";
+        private readonly Func<string> _openFileFunc;
+        private readonly IDictionary<string, MachineDetailViewModel> _dictMachineDetails = new Dictionary<string, MachineDetailViewModel>();
 
-    #region Properties
+        private bool _cursorWait;
+        private bool _enabledGui = true;
 
-    public string SavePath
-    {
-      get { return _savePath; }
-      set
-      {
-        _savePath = value;
-        OnPropertyChanged("SavePath");
-      }
-    }
-
-    public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
-    //public ObservableCollection<MachineElement> MachinesDetails { get; set; }
-    #endregion
-
-    #region Command
-    public ICommand CleanCommand { get; }
-    public ICommand SelectAllCommand { get; }
-    #endregion
-
-    #region Methods
-
-    public void InitConfig()
-    {
-      var m = ConfigurationManager.GetSection("StartupMachines") as MachinesConfigSection;
-      if (m == null || m.MachineItems.Count == 0)
-      {
-        throw new Exception("");
-      }
-      string confSavePath = ConfigurationManager.AppSettings["SavePath"];
-      if (string.IsNullOrEmpty(confSavePath))
-      {
-        SavePath = Path.GetTempPath();
-      }
-      else
-      {
-        
-      }
-
-      MachinesDetails = new ObservableCollection<MachineDetailViewModel>();
-      foreach (MachineElement item in m.MachineItems)
-      {
-        MachinesDetails.Add(new MachineDetailViewModel(item.MachineNumber, item.MachineIp));
-      }
-    }
-
-    private void Clean(object obj)
-    {
-      var md = MachinesDetails.SingleOrDefault(item => item.IsSelected);
-      if(md == null) return;
-
-      var ftpLoader = new FtpClient.FtpClient(md.Ip);
-      var list = ftpLoader.ListFiles("USBDisk/Foreman7");
-      foreach (var fileSrc in list)
-      {
-        var pathSrc = Path.Combine("USBDisk/Foreman7", fileSrc);
-        var pathTrg = Path.Combine(@"K:\TempFtp", fileSrc);
-        ftpLoader.DownloadFile(pathSrc, pathTrg);
-      }
-
-    }
-
-    private async void CleanAsync(object obj)
-    {
-      var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
-
-      const int CONCURRENCY_LEVEL = 3;
-      var mapTasks = new ConcurrentDictionary<Task, string>();
-      var result = new ConcurrentDictionary<string, bool>();
-      int nextIndex = 0;
-
-      while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
-      {
-        string ip = listMd.ElementAt(nextIndex).Ip;
-        mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
-        nextIndex++;
-      }
-      while (mapTasks.Count > 0)
-      {
-        try
+        public MainViewModel(Func<string> openFileFunc)
         {
-          Task resultTask = await Task.WhenAny(mapTasks.Keys);
-          mapTasks.TryRemove(resultTask, out string ipValue);
-          result.TryAdd(ipValue, resultTask.Status == TaskStatus.RanToCompletion);
-          await resultTask;
-        }
-        catch (Exception exc)
-        {
-          // ignored
+            _configurationApp = new ConfigurationApp();
+            _openFileFunc = openFileFunc;
+            FileOpenCommand = new DelegateCommand(FileOpen);
+            CleanCommand = new DelegateCommand(CleanAsync);
+            SelectAllCommand = new DelegateCommand(SelectAll);
         }
 
-        if(nextIndex >= listMd.Count) continue;
+   #region Properties
 
-        string ip = listMd.ElementAt(nextIndex).Ip;
-        mapTasks.TryAdd(DownloadAndDeleteAsync(ip), ip);
-        nextIndex++;
-
-      }
-
-      MessageBox.Show("Success");
-    }
-
-    private async Task DownloadAndDeleteAsync(string ip)
-    {
-      var ftpLoader = new FtpClient.FtpClient(ip);
-      string pathUSBDisk = @"USBDisk\Foreman7";
-      string pathNandFlash = @"NandFlash\Foreman7";
-
-      var listUSBDisk = await ftpLoader.ListFilesAsync(pathUSBDisk);
-      var listNandFlash = await ftpLoader.ListFilesAsync(pathNandFlash);
-
-      var diUSBDisk = Directory.CreateDirectory(Path.Combine(@"K:\TempFtp", "USBDisk"));
-      var diNandFlash = Directory.CreateDirectory(Path.Combine(@"K:\TempFtp", "NandFlash"));
-
-      foreach (var fileSrc in listUSBDisk.Where(file => file.EndsWith(".log")))
-      {
-        var pathSrc = Path.Combine(pathUSBDisk, fileSrc);
-        var pathTrg = Path.Combine(diUSBDisk.FullName, fileSrc);
-        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-        if (result == FtpStatusCode.ClosingData)
+        public string SavePath
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+            get
+            {
+                var cSavePath = _configurationApp.SavePath;
+                return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
+            }
+            set
+            {
+                _configurationApp.SavePath = value;
+                OnPropertyChanged();
+            }
         }
-      }
 
-      foreach (var fileSrc in listNandFlash.Where(file => file.EndsWith(".log")))
-      {
-        var pathSrc = Path.Combine(pathNandFlash, fileSrc);
-        var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
-        var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
-
-        if (result == FtpStatusCode.ClosingData)
+        public bool RemoveFromBlocks
         {
-          await ftpLoader.DeleteFileAsync(pathSrc);
+            get { return _configurationApp.RemoveFromBlocks; }
         }
-      }
 
-    }
+        public bool Zipped
+        {
+            get { return _configurationApp.Zipped; }
+            set
+            {
+                _configurationApp.Zipped = value;
+                OnPropertyChanged();
+            }
+        }
 
-    private void SelectAll(object obj)
-    {
-      var isChecked = (bool) obj;
-      foreach (var item in MachinesDetails)
-      {
-        item.IsSelected = isChecked;
-      }
-    }
-    #endregion
+        public bool CursorWait
+        {
+            get { return _cursorWait; }
+            set
+            {
+                _cursorWait = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool EnabledGui
+        {
+            get { return _enabledGui; }
+            set
+            {
+                _enabledGui = value;
+                OnPropertyChanged();
+            }
+        }
+    
+        public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
+   #endregion
+
+   #region Command
+        public ICommand FileOpenCommand { get; }
+        public ICommand CleanCommand { get; }
+        public ICommand SelectAllCommand { get; }
+   #endregion
+
+   #region Methods
+
+        public void InitConfig()
+        {
+
+            var machineItems = _configurationApp.MachineItems;
+            if (machineItems == null || machineItems.Count == 0)
+            {
+                return;
+            }
+            _dictMachineDetails.Clear();
+            foreach (MachineElement item in machineItems)
+            {
+                var md = new MachineDetailViewModel(item.MachineNumber, item.MachineIp);
+                if (!_dictMachineDetails.ContainsKey(item.MachineNumber))
+                {
+                    _dictMachineDetails.Add(item.MachineNumber, md);
+                }
+                else
+                {
+                    _dictMachineDetails[item.MachineNumber] = md;
+                }
+            }
+            
+            MachinesDetails = new ObservableCollection<MachineDetailViewModel>(_dictMachineDetails.Values);
+        }
+
+        private void FileOpen(object obj)
+        {
+            var res = _openFileFunc?.Invoke();
+            _configurationApp.Load(res);
+            InitConfig();
+
+        }
+
+        private async void CleanAsync(object obj)
+        {
+            MachinesDetailClear();
+            ActionProgress();
+
+            var listMd = MachinesDetails.Where(item => item.IsSelected).ToList();
+
+            const int CONCURRENCY_LEVEL = 10;
+            var mapTasks = new Dictionary<Task, string>(); 
+            int nextIndex = 0;
+
+            while (nextIndex < CONCURRENCY_LEVEL && nextIndex < listMd.Count)
+            {
+                var md = listMd.ElementAt(nextIndex);
+                mapTasks.Add(DownloadAndDeleteAsync(md.Ip), md.Number);
+                nextIndex++;
+            }
+            while (mapTasks.Count > 0)
+            {
+                string numberValue = String.Empty;
+                try
+                {
+                    Task resultTask = await Task.WhenAny(mapTasks.Keys);
+                    mapTasks.TryGetValue(resultTask, out numberValue);
+                    mapTasks.Remove(resultTask);
+                    await resultTask;
+
+                    UpdateMachineDetailItem(numberValue, "Успешно!", true);
+                }
+                catch (Exception exc)
+                {
+                    UpdateMachineDetailItem(numberValue, exc.Message, false);
+                }
+
+                if(nextIndex >= listMd.Count) continue;
+
+                var md = listMd.ElementAt(nextIndex);
+                mapTasks.Add(DownloadAndDeleteAsync(md.Ip), md.Number);
+                nextIndex++;
+            }
+
+            ActionCompleted();
+        }
+
+        private async Task DownloadAndDeleteAsync(string ip)
+        {
+            var ftpLoader = new FtpClient.FtpClient(ip, _configurationApp.RequestTimeout, _configurationApp.ReadWriteTimeout);
+    
+            var listUsbDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
+            var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
+
+            var logsUsbDisk = listUsbDisk.Where(file => file.EndsWith(FILE_EXTENSIONS));
+            var logsNandDisk = listNandFlash.Where(file => file.EndsWith(FILE_EXTENSIONS));
+
+            var rootPathTrg = Path.Combine(SavePath, ip, DateTime.Today.ToShortDateString());
+
+            if (Zipped)
+            {
+                using (var package = Package.Open(rootPathTrg + ".zip", FileMode.Create, FileAccess.ReadWrite))
+                {
+                    foreach (var fileSrc in logsUsbDisk)
+                    {
+                    await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
+                    }
+                    foreach (var fileSrc in logsNandDisk)
+                    {
+                    await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
+                    }
+                }
+            }
+            else
+            {
+                var diUsbDisk = Directory.CreateDirectory(Path.Combine(rootPathTrg, USBDISK));
+                var diNandFlash = Directory.CreateDirectory(Path.Combine(rootPathTrg, NANDFLASH));
+
+                foreach (var fileSrc in logsUsbDisk)
+                {
+                    var pathTrg = Path.Combine(diUsbDisk.FullName, fileSrc);
+                    await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
+                }
+                foreach (var fileSrc in logsNandDisk)
+                {
+                    var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
+                    await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
+                }
+            }
+        }
+
+        private async Task DoDownloadAsync(string fileNameSrc, string pathTrg, string nameRootStorage, FtpClient.FtpClient ftpLoader)
+        {
+            var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
+
+            var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
+
+            if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+            {
+                await ftpLoader.DeleteFileAsync(pathSrc);
+            }
+        }
+
+        private async Task DoDownloadZipAsync(string fileNameSrc, Package zipPackage, string nameRootStorage,  FtpClient.FtpClient ftpLoader)
+        {
+            var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
+      
+            var partUri = PackUriHelper.CreatePartUri(new Uri(Path.Combine(nameRootStorage, fileNameSrc), UriKind.Relative));
+            var packagePart = zipPackage.CreatePart(partUri, System.Net.Mime.MediaTypeNames.Text.Plain, CompressionOption.Normal);
+            var result = await ftpLoader.DownloadFileAsync(pathSrc, packagePart.GetStream());
+     
+            if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
+            {
+                await ftpLoader.DeleteFileAsync(pathSrc);
+            }
+        }
+
+        private string BuildRemotePath(string nameRootPath)
+        {
+            return Path.Combine(nameRootPath, FOREMAN);
+        }
+
+        private void SelectAll(object obj)
+        {
+            if(MachinesDetails == null) return;
+
+            var isChecked = (bool) obj;
+            foreach (var item in MachinesDetails)
+            {
+                item.IsSelected = isChecked;
+            }
+        }
+
+        private void UpdateMachineDetailItem(string number, string message, bool success)
+        {
+            _dictMachineDetails.TryGetValue(number, out MachineDetailViewModel md);
+            if (md != null)
+            {
+                md.Message = message;
+                if (!success) md.IsSelected = false;
+            }
+        }
+
+        private void MachinesDetailClear()
+        {
+            foreach (var item in _dictMachineDetails.Values)
+            {
+                item.Message = string.Empty;
+            }
+        }
+
+        private void ActionProgress()
+        {
+            EnabledGui = false;
+            CursorWait = true;
+            
+        }
+
+        private void ActionCompleted()
+        {
+            EnabledGui = true;
+            CursorWait = false;
+            
+        }
+   #endregion
   }
+
 }
