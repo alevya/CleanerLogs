@@ -90,7 +90,26 @@ namespace CleanerLogs.ViewModels
                 OnPropertyChanged();
             }
         }
-    
+
+        private bool _allSelected;
+
+        public bool AllSelected
+        {
+            get
+            {
+                return _allSelected;
+            }
+            set
+            {
+                _allSelected = value;
+                foreach (var item in MachinesDetails)
+                {
+                    item.IsSelected = value;
+                }
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<MachineDetailViewModel> MachinesDetails { get; set; }
    #endregion
 

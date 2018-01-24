@@ -69,10 +69,10 @@
                        TextAlignment="Center">
             </TextBlock>
 			<DockPanel Grid.Row="1">
-				<CheckBox x:Name="chAll" Content="Выбрать все" 
+				<!--<CheckBox x:Name="chAll" Content="Выбрать все" 
 				          Command="{Binding SelectAllCommand}"
 				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
-				</CheckBox>
+				</CheckBox>-->
 			</DockPanel>
 
 			<DockPanel Grid.Row="2">
@@ -107,9 +107,13 @@
 						</GridView>
 					</ListView.View>
 				</ListView>-->
-                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay}" AutoGenerateColumns="False" >
+                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" >
                     <DataGrid.Columns>
                         <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.Header>
+                                <CheckBox IsChecked="{Binding DataContext.AllSelected, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                                          />
+                            </DataGridTemplateColumn.Header>
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <CheckBox IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></CheckBox>
