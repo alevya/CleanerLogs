@@ -4,14 +4,18 @@ using System.Runtime.CompilerServices;
 
 namespace CleanerLogs
 {
-  public static class ConfigurationApp
+  public  class ConfigurationApp
   {
-    private static readonly Configuration _cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-    private static string _savePath;
-    private static bool _removeFromBlocks;
-    private static bool _zipped;
+    private readonly Configuration _cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+    private string _savePath;
+    private bool _removeFromBlocks;
+    private bool _zipped;
 
-    public static string SavePath
+    public ConfigurationApp()
+    {
+    }
+
+    public  string SavePath
     {
       get
       {
@@ -32,7 +36,7 @@ namespace CleanerLogs
       }
     }
 
-    public static bool RemoveFromBlocks
+    public  bool RemoveFromBlocks
     {
 
       get
@@ -55,7 +59,7 @@ namespace CleanerLogs
       }
     }
 
-    public static bool Zipped
+    public  bool Zipped
     {
       get
       {
@@ -78,7 +82,7 @@ namespace CleanerLogs
       }
     }
 
-    public static int? RequestTimeout
+    public  int? RequestTimeout
     {
       get
       {
@@ -89,7 +93,7 @@ namespace CleanerLogs
       }
     }
 
-    public static int? ReadWriteTimeout
+    public int? ReadWriteTimeout
     {
       get
       {

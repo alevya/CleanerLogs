@@ -8,11 +8,15 @@ namespace CleanerLogs.FtpClient
 {
   internal class FtpClient
   {
+    private readonly int? _requestTimeout;
+    private readonly int? _readWriteTimeout;
     public string Server { get;}
 
-    public FtpClient(string server)
+    public FtpClient(string server, int? requestTimeout, int? readWriteTimeout)
     {
-      Server = server;
+        Server = server;
+        _requestTimeout =  requestTimeout;
+        _readWriteTimeout = readWriteTimeout;
     }
 
     public IEnumerable<String> ListFiles(string path)
@@ -121,7 +125,7 @@ namespace CleanerLogs.FtpClient
       return await GetStatusCodeAsync(request);
     }
 
-    private FtpStatusCode GetStatusCode(FtpWebRequest request)
+    private FtpStatusCode GetStatusCode(WebRequest request)
     {
       using (var response = (FtpWebResponse)request.GetResponse())
       {
@@ -129,7 +133,7 @@ namespace CleanerLogs.FtpClient
       }
     }
 
-    private async Task<FtpStatusCode> GetStatusCodeAsync(FtpWebRequest request)
+    private static async Task<FtpStatusCode> GetStatusCodeAsync(WebRequest request)
     {
       using (var response = (FtpWebResponse)await request.GetResponseAsync())
       {
@@ -148,9 +152,8 @@ namespace CleanerLogs.FtpClient
       var uri = GetServerUri(path);
 
       var request = (FtpWebRequest)WebRequest.Create(uri);
-      request.Timeout = ConfigurationApp.RequestTimeout != null ? ConfigurationApp.RequestTimeout.Value : request.Timeout ;
-      request.ReadWriteTimeout = ConfigurationApp.ReadWriteTimeout != null ? ConfigurationApp.ReadWriteTimeout.Value
-                                                                           : request.ReadWriteTimeout;
+      request.Timeout = _requestTimeout ?? request.Timeout ;
+      request.ReadWriteTimeout = _readWriteTimeout ?? request.ReadWriteTimeout;
       request.Method = method;
       request.Credentials = new NetworkCredential("anonymous", "anonymous");
 

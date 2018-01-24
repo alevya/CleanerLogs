@@ -18,6 +18,8 @@ namespace CleanerLogs.ViewModels
 {
   internal class MainViewModel : BaseViewModel
   {
+
+    private ConfigurationApp _configurationApp;
     private const string FILE_EXTENSIONS = ".log";
     private const string FOREMAN = "Foreman7";
     private const string USBDISK = "USBDisk";
@@ -28,6 +30,7 @@ namespace CleanerLogs.ViewModels
 
     public MainViewModel(Func<string> openFileFunc)
     {
+      _configurationApp = new ConfigurationApp();
       _openFileFunc = openFileFunc;
       FileOpenCommand = new DelegateCommand(FileOpen);
       CleanCommand = new DelegateCommand(CleanAsync);
@@ -40,27 +43,27 @@ namespace CleanerLogs.ViewModels
     {
       get
       {
-        var cSavePath = ConfigurationApp.SavePath;
+        var cSavePath = _configurationApp.SavePath;
         return string.IsNullOrEmpty(cSavePath) ? Path.GetTempPath() : cSavePath;
       }
       set
       {
-        ConfigurationApp.SavePath = value;
+          _configurationApp.SavePath = value;
         OnPropertyChanged();
       }
     }
 
     public bool RemoveFromBlocks
     {
-      get { return ConfigurationApp.RemoveFromBlocks; }
+      get { return _configurationApp.RemoveFromBlocks; }
     }
 
     public bool Zipped
     {
-      get { return ConfigurationApp.Zipped; }
+      get { return _configurationApp.Zipped; }
       set
       {
-        ConfigurationApp.Zipped = value;
+          _configurationApp.Zipped = value;
         OnPropertyChanged();
       }
     }
@@ -177,7 +180,7 @@ namespace CleanerLogs.ViewModels
 
     private async Task DownloadAndDeleteAsync(string ip)
     {
-      var ftpLoader = new FtpClient.FtpClient(ip);
+      var ftpLoader = new FtpClient.FtpClient(ip, _configurationApp.RequestTimeout, _configurationApp.ReadWriteTimeout);
     
       var listUsbDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
       var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
