@@ -23,7 +23,7 @@ namespace CleanerLogs.ViewModels
         private ObservableCollection<MachineDetailViewModel> _machinesDetails;
         private bool _cursorWait;
         private bool _enabledGui = true;
-        
+        private bool _allSelected;
 
         public MainViewModel(Func<string> openFileFunc)
         {
@@ -33,9 +33,11 @@ namespace CleanerLogs.ViewModels
             SaveCommand = new DelegateCommand(SaveAsync);
         }
 
-   #region Properties
+    #region Properties
 
-            
+        /// <summary>
+        /// Путь для сохранения лог-файлов
+        /// </summary>
         public string SavePath
         {
             get
@@ -56,11 +58,18 @@ namespace CleanerLogs.ViewModels
             }
         }
 
+        /// <summary>
+        /// Удалять лог-файлы с блоков после сохранения
+        /// </summary>
         public bool RemoveFromBlocks
         {
             get { return _configurationApp.RemoveFromBlocks; }
         }
 
+
+        /// <summary>
+        /// Сжимать в пакет лог-файлы
+        /// </summary>
         public bool Zipped
         {
             get { return _configurationApp.Zipped; }
@@ -71,6 +80,9 @@ namespace CleanerLogs.ViewModels
             }
         }
 
+        /// <summary>
+        /// Свойство ожидания процесса выполнения
+        /// </summary>
         public bool CursorWait
         {
             get { return _cursorWait; }
@@ -81,6 +93,9 @@ namespace CleanerLogs.ViewModels
             }
         }
 
+        /// <summary>
+        /// Возвращает или задаёт значение, указывающее, требуется ли активация элементов в пользовательском интерфейсе
+        /// </summary>
         public bool EnabledGui
         {
             get { return _enabledGui; }
@@ -90,8 +105,6 @@ namespace CleanerLogs.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        private bool _allSelected;
 
         public bool AllSelected
         {
@@ -110,6 +123,9 @@ namespace CleanerLogs.ViewModels
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public ObservableCollection<MachineDetailViewModel> MachinesDetails
         {
             get { return _machinesDetails; }
@@ -316,11 +332,21 @@ namespace CleanerLogs.ViewModels
             }
         }
 
+        /// <summary>
+        /// Создание конечной части имени пути удаленного ресурса 
+        /// </summary>
+        /// <param name="nameRootPath"></param>
+        /// <returns></returns>
         private string BuildRemotePath(string nameRootPath)
         {
             return Path.Combine(nameRootPath, FOREMAN);
         }
 
+        /// <summary>
+        /// Создание имени папки для лог-файлов
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         private string BuildLogFolderName(string name = "")
         {
             return string.Format("log_{0}", DateTime.Today.ToShortDateString());
