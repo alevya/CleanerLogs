@@ -49,7 +49,7 @@
 		            Orientation="Horizontal" HorizontalAlignment="Left">
 			<Button Content="Сохранить"
 			        Margin="3,3,5,3"
-			        Command="{Binding CleanCommand}"
+			        Command="{Binding SaveCommand}"
 			        HorizontalAlignment="Center"
 			        VerticalAlignment="Center"/>
 			<TextBlock Text="{Binding Msg}"></TextBlock>
@@ -63,51 +63,14 @@
 				<RowDefinition Height="Auto"></RowDefinition>
 			</Grid.RowDefinitions>
 
-            <TextBlock Width="Auto" Text="Блоки мониторинга" FontWeight="DemiBold"
+			<TextBlock Width="Auto" Text="Блоки мониторинга" FontWeight="DemiBold"
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Center"
                        TextAlignment="Center">
-            </TextBlock>
-			<DockPanel Grid.Row="1">
-				<!--<CheckBox x:Name="chAll" Content="Выбрать все" 
-				          Command="{Binding SelectAllCommand}"
-				          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
-				</CheckBox>-->
-			</DockPanel>
+			</TextBlock>
 
 			<DockPanel Grid.Row="2">
-				<!--<ListView ItemsSource="{Binding Path= MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-					<ListView.View>
-						<GridView>
-							<GridView.Columns>
-								<GridViewColumn>
-									--><!--<GridViewColumn.HeaderTemplate>
-										<DataTemplate>
-											<CheckBox x:Name="chAll"  
-											          Command="{Binding SelectAllCommand}"
-											          CommandParameter= "{Binding Path= IsChecked, ElementName=chAll}">
-											</CheckBox>
-
-										</DataTemplate>
-
-									</GridViewColumn.HeaderTemplate>--><!--
-									<GridViewColumn.CellTemplate>
-										<DataTemplate>
-
-											<CheckBox IsChecked="{Binding IsSelected}"></CheckBox>
-
-										</DataTemplate>
-									</GridViewColumn.CellTemplate>
-								</GridViewColumn>
-
-								<GridViewColumn Header="Номер блока" Width="Auto" DisplayMemberBinding="{Binding Number}"></GridViewColumn>
-								<GridViewColumn Header="Ip-адрес" Width="Auto" DisplayMemberBinding="{Binding Ip}"></GridViewColumn>
-								<GridViewColumn Width="350" DisplayMemberBinding="{Binding Message}"></GridViewColumn>
-							</GridView.Columns>
-						</GridView>
-					</ListView.View>
-				</ListView>-->
-                <DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
+				<DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
                            >
                     <DataGrid.Columns>
                         <DataGridTemplateColumn>

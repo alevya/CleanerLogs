@@ -31,8 +31,7 @@ namespace CleanerLogs.ViewModels
             _configurationApp = new ConfigurationApp();
             _openFileFunc = openFileFunc;
             FileOpenCommand = new DelegateCommand(FileOpen);
-            CleanCommand = new DelegateCommand(CleanAsync);
-            SelectAllCommand = new DelegateCommand(SelectAll);
+            SaveCommand = new DelegateCommand(SaveAsync);
         }
 
    #region Properties
@@ -124,8 +123,7 @@ namespace CleanerLogs.ViewModels
 
    #region Command
         public ICommand FileOpenCommand { get; }
-        public ICommand CleanCommand { get; }
-        public ICommand SelectAllCommand { get; }
+        public ICommand SaveCommand { get; }
    #endregion
 
    #region Methods
@@ -165,7 +163,7 @@ namespace CleanerLogs.ViewModels
 
         }
 
-        private async void CleanAsync(object obj)
+        private async void SaveAsync(object obj)
         {
             MachinesDetailClear();
             ActionProgress();
