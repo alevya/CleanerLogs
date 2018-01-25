@@ -132,7 +132,9 @@ namespace CleanerLogs.ViewModels
 
         public void InitConfig()
         {
-
+            SavePath = _configurationApp.SavePath;
+            Zipped = _configurationApp.Zipped;
+          
             var machineItems = _configurationApp.MachineItems;
             if (machineItems == null || machineItems.Count == 0)
             {

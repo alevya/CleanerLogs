@@ -19,7 +19,7 @@ namespace CleanerLogs
           }
       }
 
-      public  string SavePath
+      public string SavePath
       {
         get
         {
