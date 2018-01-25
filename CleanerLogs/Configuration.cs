@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Runtime.CompilerServices;
 
 namespace CleanerLogs
 {
@@ -12,16 +10,12 @@ namespace CleanerLogs
       private bool _removeFromBlocks;
       private bool _zipped;
 
-      public ConfigurationApp()
-      {
-      }
-
       public MachinesCollection MachineItems
       {
           get
           {
               var machines = _cfg.GetSection("StartupMachines") as MachinesConfigSection;
-              return machines != null ? machines.MachineItems : null;
+              return machines?.MachineItems;
           }
       }
 
@@ -116,12 +110,10 @@ namespace CleanerLogs
 
       public void Load(string path)
       {
-          var confMap = new ExeConfigurationFileMap();
-          confMap.ExeConfigFilename = path;
-          _cfg = ConfigurationManager.OpenMappedExeConfiguration(confMap, ConfigurationUserLevel.None);
-
-
+        var confMap = new ExeConfigurationFileMap {ExeConfigFilename = path};
+        _cfg = ConfigurationManager.OpenMappedExeConfiguration(confMap, ConfigurationUserLevel.None);
       }
+
     }
 
     public class MachinesConfigSection : ConfigurationSection
@@ -142,13 +134,16 @@ namespace CleanerLogs
             set { base["number"] = value; }
         }
 
-        [ConfigurationProperty("ip", DefaultValue = "", IsKey = false, IsRequired = false)]
-        public string MachineIp
+    [ConfigurationProperty("ip", DefaultValue = "", IsKey = false, IsRequired = false)]
+    public string MachineIp
+    {
+        get
         {
-            get { return (string)base["ip"]; }
-            set { base["ip"] = value; }
+          return (string)base["ip"];
         }
+        set { base["ip"] = value; }
     }
+  }
 
     [ConfigurationCollection(typeof(MachineElement), AddItemName = "Machine")]
     public class MachinesCollection : ConfigurationElementCollection

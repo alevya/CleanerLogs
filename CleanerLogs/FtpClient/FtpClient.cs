@@ -8,6 +8,9 @@ namespace CleanerLogs.FtpClient
 {
   internal class FtpClient
   {
+
+    private readonly string _userName;
+    private readonly string _password;
     private readonly int? _requestTimeout;
     private readonly int? _readWriteTimeout;
     public string Server { get;}
@@ -15,6 +18,8 @@ namespace CleanerLogs.FtpClient
     public FtpClient(string server, int? requestTimeout = null, int? readWriteTimeout = null)
     {
         Server = server;
+        _userName = "anonymous";
+        _password = "anonymous";
         _requestTimeout =  requestTimeout;
         _readWriteTimeout = readWriteTimeout;
     }
@@ -155,7 +160,7 @@ namespace CleanerLogs.FtpClient
       request.Timeout = _requestTimeout ?? request.Timeout ;
       request.ReadWriteTimeout = _readWriteTimeout ?? request.ReadWriteTimeout;
       request.Method = method;
-      request.Credentials = new NetworkCredential("root", "admin");//new NetworkCredential("anonymous", "anonymous");
+      request.Credentials = new NetworkCredential(_userName, _password);
 
       return request;
     }
