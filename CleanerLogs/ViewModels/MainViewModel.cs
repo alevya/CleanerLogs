@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Configuration;
 using System.IO.Packaging;
 using System.Linq;
 using System.Net;
@@ -21,10 +20,10 @@ namespace CleanerLogs.ViewModels
         private const string NANDFLASH = "NandFlash";
         private readonly Func<string> _openFileFunc;
         private readonly IDictionary<string, MachineDetailViewModel> _dictMachineDetails = new Dictionary<string, MachineDetailViewModel>();
-
+        private ObservableCollection<MachineDetailViewModel> _machinesDetails;
         private bool _cursorWait;
         private bool _enabledGui = true;
-        private ObservableCollection<MachineDetailViewModel> _machinesDetails;
+        
 
         public MainViewModel(Func<string> openFileFunc)
         {
@@ -36,6 +35,7 @@ namespace CleanerLogs.ViewModels
 
    #region Properties
 
+            
         public string SavePath
         {
             get
@@ -127,7 +127,10 @@ namespace CleanerLogs.ViewModels
    #endregion
 
    #region Methods
-
+        
+        /// <summary>
+        /// Инициализация свойств из конфигурации
+        /// </summary>
         public void InitConfig()
         {
             SavePath = _configurationApp.SavePath;
@@ -155,6 +158,11 @@ namespace CleanerLogs.ViewModels
             MachinesDetails = new ObservableCollection<MachineDetailViewModel>(_dictMachineDetails.Values);
         }
 
+
+        /// <summary>
+        /// Обработчик команды при открытии файла конфигурации 
+        /// </summary>
+        /// <param name="obj"></param>
         private void FileOpen(object obj)
         {
             var res = _openFileFunc?.Invoke();
@@ -163,6 +171,10 @@ namespace CleanerLogs.ViewModels
 
         }
 
+        /// <summary>
+        /// Обработчик команды при сохранении лог-файлов
+        /// </summary>
+        /// <param name="obj"></param>
         private async void SaveAsync(object obj)
         {
             MachinesDetailClear();
@@ -178,7 +190,7 @@ namespace CleanerLogs.ViewModels
             {
                 var md = listMd.ElementAt(nextIndex);
                
-                mapTasks.Add(DownloadAndDeleteAsync(md.Ip), md.Number);
+                mapTasks.Add(DoDownloadAndDeleteAsync(md.Ip), md.Number);
                 nextIndex++;
                
             }
@@ -202,19 +214,24 @@ namespace CleanerLogs.ViewModels
                 if(nextIndex >= listMd.Count) continue;
 
                 var md = listMd.ElementAt(nextIndex);
-                mapTasks.Add(DownloadAndDeleteAsync(md.Ip), md.Number);
+                mapTasks.Add(DoDownloadAndDeleteAsync(md.Ip), md.Number);
                 nextIndex++;
             }
 
             ActionCompleted();
         }
 
-        private async Task DownloadAndDeleteAsync(string ip)
+        /// <summary>
+        /// Запуск загрузки файлов из удаленного ресурса <paramref name="address"/>
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        private async Task DoDownloadAndDeleteAsync(string address)
         {
             var logFolderName = BuildLogFolderName();
-            var rootPathTrg = Path.Combine(SavePath, ip);
+            var rootPathTrg = Path.Combine(SavePath, address);
          
-            var ftpLoader = new FtpClient.FtpClient(ip, _configurationApp.RequestTimeout, _configurationApp.ReadWriteTimeout);
+            var ftpLoader = new FtpClient.FtpClient(address, _configurationApp.RequestTimeout, _configurationApp.ReadWriteTimeout);
     
             var listUsbDisk = await ftpLoader.ListFilesAsync(BuildRemotePath(USBDISK));
             var listNandFlash = await ftpLoader.ListFilesAsync(BuildRemotePath(NANDFLASH));
@@ -230,11 +247,15 @@ namespace CleanerLogs.ViewModels
                 {
                     foreach (var fileSrc in logsUsbDisk)
                     {
-                    await DoDownloadZipAsync(fileSrc, package, USBDISK, ftpLoader);
+                      var pathSrc = Path.Combine(BuildRemotePath(USBDISK), fileSrc);
+                      var partPackageName = Path.Combine(USBDISK, fileSrc);
+                      await DownloadZipAsync(pathSrc, package, partPackageName, ftpLoader);
                     }
                     foreach (var fileSrc in logsNandDisk)
                     {
-                    await DoDownloadZipAsync(fileSrc, package, NANDFLASH, ftpLoader);
+                      var pathSrc = Path.Combine(BuildRemotePath(NANDFLASH), fileSrc);
+                      var partPackageName = Path.Combine(NANDFLASH, fileSrc);
+                      await DownloadZipAsync(pathSrc, package, partPackageName, ftpLoader);
                     }
                 }
             }
@@ -245,21 +266,28 @@ namespace CleanerLogs.ViewModels
 
                 foreach (var fileSrc in logsUsbDisk)
                 {
+                    var pathSrc = Path.Combine(BuildRemotePath(USBDISK), fileSrc);
                     var pathTrg = Path.Combine(diUsbDisk.FullName, fileSrc);
-                    await DoDownloadAsync(fileSrc, pathTrg, USBDISK, ftpLoader);
+                    await DownloadAsync(pathSrc, pathTrg, ftpLoader);
                 }
                 foreach (var fileSrc in logsNandDisk)
                 {
+                    var pathSrc = Path.Combine(BuildRemotePath(NANDFLASH), fileSrc);
                     var pathTrg = Path.Combine(diNandFlash.FullName, fileSrc);
-                    await DoDownloadAsync(fileSrc, pathTrg, NANDFLASH, ftpLoader);
+                    await DownloadAsync(pathSrc, pathTrg, ftpLoader);
                 }
             }
         }
 
-        private async Task DoDownloadAsync(string fileNameSrc, string pathTrg, string nameRootStorage, FtpClient.FtpClient ftpLoader)
+        /// <summary>
+        /// Асинхронная загрузка файла средством <paramref name="ftpLoader"/>
+        /// </summary>
+        /// <param name="pathSrc">путь удаленного источника</param>
+        /// <param name="pathTrg">локальный путь для сохранения</param>
+        /// <param name="ftpLoader">объект, используемый для работы по ftp-протоколу</param>
+        /// <returns></returns>
+        private async Task DownloadAsync(string pathSrc, string pathTrg, FtpClient.FtpClient ftpLoader)
         {
-            var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
-
             var result = await ftpLoader.DownloadFileAsync(pathSrc, pathTrg);
 
             if (result == FtpStatusCode.ClosingData && RemoveFromBlocks)
@@ -268,11 +296,17 @@ namespace CleanerLogs.ViewModels
             }
         }
 
-        private async Task DoDownloadZipAsync(string fileNameSrc, Package zipPackage, string nameRootStorage,  FtpClient.FtpClient ftpLoader)
+        /// <summary>
+        /// Асинхронная загрузка файла средством <paramref name="ftpLoader"/>  с сохранением в zip-пакет
+        /// </summary>
+        /// <param name="pathSrc">путь удаленного источника</param>
+        /// <param name="zipPackage">объект, представляющий контейнер для хранения нескольких объектов</param>
+        /// <param name="partPackageName">имя части пакета</param>
+        /// <param name="ftpLoader">объект, используемый для работы по ftp-протоколу</param>
+        /// <returns></returns>
+        private async Task DownloadZipAsync(string pathSrc, Package zipPackage, string partPackageName,  FtpClient.FtpClient ftpLoader)
         {
-            var pathSrc = Path.Combine(BuildRemotePath(nameRootStorage), fileNameSrc);
-      
-            var partUri = PackUriHelper.CreatePartUri(new Uri(Path.Combine(nameRootStorage, fileNameSrc), UriKind.Relative));
+            var partUri = PackUriHelper.CreatePartUri(new Uri(partPackageName, UriKind.Relative));
             var packagePart = zipPackage.CreatePart(partUri, System.Net.Mime.MediaTypeNames.Text.Plain, CompressionOption.Normal);
             var result = await ftpLoader.DownloadFileAsync(pathSrc, packagePart.GetStream());
      
@@ -290,17 +324,6 @@ namespace CleanerLogs.ViewModels
         private string BuildLogFolderName(string name = "")
         {
             return string.Format("log_{0}", DateTime.Today.ToShortDateString());
-        }
-
-        private void SelectAll(object obj)
-        {
-            if(MachinesDetails == null) return;
-
-            var isChecked = (bool) obj;
-            foreach (var item in MachinesDetails)
-            {
-                item.IsSelected = isChecked;
-            }
         }
 
         private void UpdateMachineDetailItem(string number, string message, bool success)
