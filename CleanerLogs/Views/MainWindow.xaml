@@ -71,7 +71,7 @@
 
 			<DockPanel Grid.Row="2">
 				<DataGrid  ItemsSource="{Binding Path=MachinesDetails, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False"
-                           >
+                           GridLinesVisibility="All" >
                     <DataGrid.Columns>
                         <DataGridTemplateColumn>
                             <DataGridTemplateColumn.Header>
